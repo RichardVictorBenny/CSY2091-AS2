@@ -70,57 +70,44 @@
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dsp_student_id"
-                    android:text="@string/username"
-                    android:alpha="0.9"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
-
-                <EditText
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inplayUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/edt_username"
-                    android:hint="@string/username"
-                    android:textSize="20sp"
-                    android:inputType="text"
-                    android:autofillHints="" />
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/username">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inpedtUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="16sp"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+
 
                 <View
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"/>
+                    android:layout_height="15dp"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dsp_password"
-                    android:text="@string/password"
-                    android:alpha="0.9"
-                    android:textSize="20sp"
-                    android:textStyle="bold"/>
-
-                <RelativeLayout
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inplayPassword"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <EditText
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:hint="@string/password">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/inpedtPassword"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:id="@+id/edt_password"
-                        android:inputType="textPassword"
-                        android:hint="@string/password"
-                        android:textSize="20sp"
-                        />
+                        android:textSize="16sp"/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:textSize="25sp"
-                        app:drawableEndCompat="@drawable/password_icon" />
-                </RelativeLayout>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
 
 
 
@@ -151,7 +138,7 @@
 
                 <View
                     android:layout_width="wrap_content"
-                    android:layout_height="70dp"/>
+                    android:layout_height="100dp"/>
 
                 <Button
                     android:id="@+id/btn_login"
@@ -175,7 +162,7 @@
 
                 <View
                     android:layout_width="wrap_content"
-                    android:layout_height="50dp"/>
+                    android:layout_height="70dp"/>
 
 
             </LinearLayout>

@@ -11,5 +11,14 @@
     <string name="save_login">Remember me</string>
     <string name="forgot_password">forgot_password</string>
     <string name="sign_up">Don\'t have an account? Sign Up</string>
+    <string name="register">REGISTER</string>
+    <string name="firstname">Firstname</string>
+    <string name="middlename">Middlename</string>
+    <string name="lastname">Lastname</string>
+    <string name="email">Email</string>
+    <string name="year">Year of Study</string>
+    <string name="dateofbirth">Date of Birth</string>
+    <string name="register_account">Create Account</string>
+
 
 </resources>
