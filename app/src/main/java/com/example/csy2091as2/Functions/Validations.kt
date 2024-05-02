@@ -24,13 +24,16 @@ class Validations {
 //        Log.d("TAG", "checkForSpecialChars: starrt")
         if (text != null) {
 //            Log.d("TAG", text.toString())
-            inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~]".toRegex())) "Invalid Character" else null
+            inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~0123456789]".toRegex())) "Invalid Character" else null
         }
 //        Log.d("TAG", "checkForSpecialChars: end")
     }
 
     fun checkForSpecialChars(inputLayout: TextInputLayout, text: String){
-        inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~]".toRegex())) "Invalid Character" else null
+        if(inputLayout.error == null){
+            inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~0123456789]".toRegex())) "Invalid Character" else null
+        }
+
     }
 
     fun valiateDate(inpDate: LocalDate, layout: TextInputLayout){

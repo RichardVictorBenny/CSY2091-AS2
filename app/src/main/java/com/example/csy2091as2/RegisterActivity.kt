@@ -12,6 +12,7 @@ class RegisterActivity : AppCompatActivity() {
         val db = DBHelper(this)
         val functions = Functions()
 
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.registerFragmentContainer, RegisterDetailsFragment()).commit()
 
@@ -71,20 +72,4 @@ class RegisterActivity : AppCompatActivity() {
 //        }
     }
 
-//    private fun showDatePickerDialog(edtDatePicker: TextInputEditText){
-//        val calendar = Calendar.getInstance()
-//        val year = calendar.get(Calendar.YEAR)
-//        val month = calendar.get(Calendar.MONTH)
-//        val day = calendar.get(Calendar.DAY_OF_MONTH)
-//        var dateOfBirth:String = ""
-//
-//        val datePickerDialog = DatePickerDialog(this, DatePickerDialog.OnDateSetListener { view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
-//            // Do something with the selected date
-//            dateOfBirth = "$dayOfMonth/${monthOfYear + 1}/$year"
-//            edtDatePicker.setText(dateOfBirth)
-//
-//        }, year, month, day)
-//
-//        datePickerDialog.show()
-//    }
 }

@@ -1,4 +1,4 @@
-package com.example.csy2091as2
+package com.example.csy2091as2.Functions
 
 data class User(
     val studentId: String,

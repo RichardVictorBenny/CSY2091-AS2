@@ -8,7 +8,7 @@ import com.example.csy2091as2.Functions.Functions
 
 class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object{
-        const val DATABASE_VERSION = 5
+        const val DATABASE_VERSION = 6
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -50,11 +50,11 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun addUser(
         studentID: String,
-        firstName: String,
-        middleName: String,
-        lastName: String,
-        email: String,
-        dob: String,
+        firstName: String?,
+        middleName: String?,
+        lastName: String?,
+        email: String?,
+        dob: String?,
         password: String
         ): Array<Long>{
 
@@ -87,14 +87,25 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     fun authenticate(username: String, password: String): Boolean{
 
-        val db: SQLiteDatabase = this.writableDatabase
-        val query = "SELECT * FROM "+ tblAuthentication +" WHERE "+ colAuthUserName + " = " + username +" AND "+ colAuthPassword+" = " + password
+        val db: SQLiteDatabase = this.readableDatabase
+        val query = "SELECT * FROM "+ tblAuthentication +" WHERE "+ colAuthUserName + " = ? AND "+ colAuthPassword+" = ?"
+        val cursor = db.rawQuery(query, arrayOf(username, password))
+        val result = cursor.count>0
+        cursor.close()
 
-        return try{
-            db.execSQL(query)
-            true
-        } catch (e: Exception){
-            false
-        }
+        return result
+    }
+
+    fun userCheck(username: String): Boolean{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblAuthentication WHERE $colAuthUserName = ?"
+
+        val cursor = db.rawQuery(query, arrayOf(username))
+        val result = cursor.count>0
+        cursor.close()
+
+        return result
+
+
     }
 }
