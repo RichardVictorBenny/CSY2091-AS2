@@ -8,13 +8,14 @@ import com.example.csy2091as2.Functions.Functions
 
 class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object{
-        const val DATABASE_VERSION = 6
+        const val DATABASE_VERSION = 7
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
         val colUserID = "UserID"
         val colAuthPassword = "AuthPassword"
         val colAuthUserName = "AuthUserName"
+        val colAuthType = "AuthType"
 
         val tblUsers = "tblUsers"
         val colUserFirstName = "UserFirstName"
@@ -28,23 +29,23 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colAuthUserName+" TEXT, "+ colAuthPassword + " TEXT)"
+        val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colAuthUserName+" TEXT, "+ colAuthPassword + " TEXT, $colAuthType TEXT)"
         val qryUser = "CREATE TABLE " + tblUsers + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT,  "+ colAuthUserName + " TEXT, "+ colUserFirstName+" TEXT, "+
                 colUserMiddleName+" TEXT, "+ colUserLastName+" TEXT, "+ colUserDOB+" TEXT, "+ colUserEmail+" TEXT, "+ colUserDateCreated+" TEXT, "+ colUserDateUpdated+" TEXT)"
 
-        if (db != null){
-            db.execSQL(qryUser)
-            db.execSQL(qryAuthentication)
-        }
+//        if (db != null){
+//            db.execSQL(qryUser)
+//            db.execSQL(qryAuthentication)
+//        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val qryUser = "DROP TABLE IF EXISTS " + tblUsers
-        val qryAuthentication = "DROP TABLE IF EXISTS "+ tblAuthentication
+//        val qryUser = "DROP TABLE IF EXISTS " + tblUsers
+        val qryAuthentication = "ALTER TABLE $tblAuthentication ADD COLUMN $colAuthType TEXT DEFAULT 'student'"
         if(db != null){
             db.execSQL(qryAuthentication)
-            db.execSQL(qryUser)
-            onCreate(db)
+//            db.execSQL(qryUser)
+
         }
     }
 
@@ -85,12 +86,12 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 //        return arrayOf(statusCred)
     }
 
-    fun authenticate(username: String, password: String): Boolean{
+    fun authenticate(username: String, password: String): String?{
 
         val db: SQLiteDatabase = this.readableDatabase
         val query = "SELECT * FROM "+ tblAuthentication +" WHERE "+ colAuthUserName + " = ? AND "+ colAuthPassword+" = ?"
         val cursor = db.rawQuery(query, arrayOf(username, password))
-        val result = cursor.count>0
+        val result = if(cursor.moveToNext()) cursor.getString(cursor.getColumnIndexOrThrow(colAuthType)) else null
         cursor.close()
 
         return result

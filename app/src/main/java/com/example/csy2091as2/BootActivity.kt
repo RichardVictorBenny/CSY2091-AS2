@@ -19,7 +19,7 @@ class BootActivity : AppCompatActivity() {
         Handler(Looper.getMainLooper()).postDelayed({
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
-        }, 1300)
+        }, 1500)
 
     }
 }

@@ -6,7 +6,9 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import com.example.csy2091as2.Functions.Hashing
+import com.example.csy2091as2.Functions.Validations
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 
@@ -16,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val db = DBHelper(this)
+        val validation = Validations()
         val txtSignUp:TextView = findViewById(R.id.textViewSignUp)
         val edtUserName: TextInputEditText = findViewById(R.id.inpedtUsername)
         val edtPassword: TextInputEditText = findViewById(R.id.inpedtPassword)
@@ -33,10 +36,29 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btnLogin.setOnClickListener{
+
+            validation.emptyCheck(layUserName, edtUserName)
+            validation.emptyCheck(layPassword, edtPassword)
+            
             val username = edtUserName.text.toString()
-            if(db.authenticate(username, Hashing.doHashing(edtPassword.text.toString(), username))){
-                startActivity(Intent(this, MainActivity::class.java))
+            val userType = db.authenticate(username, Hashing.doHashing(edtPassword.text.toString(), username))
+
+
+            if(userType=="student"){
+                edtUserName.setText("")
+                edtPassword.setText("")
+
+                // TODO: add shared preference
+                val activity = Intent(this, MainActivity::class.java)
+                activity.putExtra("usertype", "student")
+                startActivity(activity)
+            } else {
+                layPassword.error = " "
+                layUserName.error = "  "
+                Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
             }
         }
+
+        // TODO: work on reseting password
     }
 }
