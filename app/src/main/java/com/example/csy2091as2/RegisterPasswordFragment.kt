@@ -1,6 +1,7 @@
 package com.example.csy2091as2
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,13 +26,26 @@ class RegisterPasswordFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_register_password, container, false)
+        val bundle = arguments
+
 
         val btnRegisterBack: Button = view.findViewById(R.id.btnRegisterBack)
         btnRegisterBack.setOnClickListener {
             val fragment = RegisterDetailsFragment()
+            fragment.arguments = bundle
             val transaction = activity?.supportFragmentManager?.beginTransaction()
             transaction?.replace(R.id.registerFragmentContainer, fragment)?.commit()
         }
+
+//        if(bundle?.getString("firstname") != null){
+//            Log.d("TAG", "onCreateView: firstname found")
+//        } else{
+//            Log.d("TAG", "onCreateView: not found")
+//        }
+
+
+
+
 
         return view
     }

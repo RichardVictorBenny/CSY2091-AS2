@@ -2,13 +2,7 @@ package com.example.csy2091as2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.app.DatePickerDialog
-import android.widget.Button
-import android.widget.DatePicker
-import android.widget.Toast
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import java.util.*
+import com.example.csy2091as2.Functions.Functions
 
 class RegisterActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,4 +1,4 @@
-package com.example.csy2091as2
+package com.example.csy2091as2.Functions
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
