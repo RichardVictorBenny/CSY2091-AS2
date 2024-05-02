@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Campus Connect</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -18,12 +18,18 @@
     <string name="email">Email</string>
     <string name="year">Year of Study</string>
     <string name="dateofbirth">Date of Birth</string>
-    <string name="register_account">Create Account</string>
+    <string name="register_account">Register</string>
     <string name="school_name">MIDDLEMORE SECONDARY SCHOOL</string>
     <string name="company_name">Richard INC.</string>
     <string name="from">from</string>
     <string name="register_tagline">Register an account to see what\nyour friends are upto!!</string>
     <string name="register_warning">Use correct information and your school email</string>
+    <string name="register_account_next">Next</string>
+    <string name="password_confirm">Confirm Password</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="back">Back</string>
 
 
 </resources>

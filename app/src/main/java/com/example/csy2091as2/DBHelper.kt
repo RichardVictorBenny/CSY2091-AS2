@@ -7,13 +7,13 @@ import android.database.sqlite.SQLiteOpenHelper
 
 class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object{
-        const val DATABASE_VERSION = 3
+        const val DATABASE_VERSION = 5
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
         val colUserID = "UserID"
-        val colUserPassword = "UserPassword"
-        val colUserStudentID = "StudentID"
+        val colAuthPassword = "AuthPassword"
+        val colAuthUserName = "AuthUserName"
 
         val tblUsers = "tblUsers"
         val colUserFirstName = "UserFirstName"
@@ -27,8 +27,8 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colUserPassword+" TEXT, "+ colUserStudentID + " TEXT)"
-        val qryUser = "CREATE TABLE " + tblUsers + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT,  "+ colUserStudentID + " TEXT, "+ colUserFirstName+" TEXT, "+
+        val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colAuthUserName+" TEXT, "+ colAuthPassword + " TEXT)"
+        val qryUser = "CREATE TABLE " + tblUsers + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT,  "+ colAuthUserName + " TEXT, "+ colUserFirstName+" TEXT, "+
                 colUserMiddleName+" TEXT, "+ colUserLastName+" TEXT, "+ colUserDOB+" TEXT, "+ colUserEmail+" TEXT, "+ colUserDateCreated+" TEXT, "+ colUserDateUpdated+" TEXT)"
 
         if (db != null){
@@ -71,16 +71,29 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         userValues.put(colUserDOB, dob)
         userValues.put(colUserDateCreated, currentDate)
         userValues.put(colUserDateUpdated, currentDate)
-        userValues.put(colUserStudentID, studentID)
+        userValues.put(colAuthUserName, studentID)
 
         val userCred = ContentValues()
-        userCred.put(colUserStudentID, studentID)
-        userCred.put(colUserPassword, password)
+        userCred.put(colAuthUserName, studentID)
+        userCred.put(colAuthPassword, password)
 
 
         val statusUser =  db.insert(tblUsers, null, userValues)
         val statusCred = db.insert(tblAuthentication, null, userCred)
         return arrayOf(statusUser,statusCred)
 //        return arrayOf(statusCred)
+    }
+
+    fun authenticate(username: String, password: String): Boolean{
+
+        val db: SQLiteDatabase = this.writableDatabase
+        val query = "SELECT * FROM "+ tblAuthentication +" WHERE "+ colAuthUserName + " = " + username +" AND "+ colAuthPassword+" = " + password
+
+        return try{
+            db.execSQL(query)
+            true
+        } catch (e: Exception){
+            false
+        }
     }
 }
