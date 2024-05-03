@@ -8,7 +8,7 @@ import com.example.csy2091as2.Functions.Functions
 
 class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object{
-        const val DATABASE_VERSION = 7
+        const val DATABASE_VERSION = 8
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -41,12 +41,14 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
 //        val qryUser = "DROP TABLE IF EXISTS " + tblUsers
-        val qryAuthentication = "ALTER TABLE $tblAuthentication ADD COLUMN $colAuthType TEXT DEFAULT 'student'"
-        if(db != null){
-            db.execSQL(qryAuthentication)
+//        val qryAuthentication = "ALTER TABLE $tblAuthentication ADD COLUMN $colAuthType TEXT DEFAULT 'student'"
+//        val qryAuthentication = "DELETE FROM $tblAuthentication WHERE $colUserID = '3'"
+//
+//        if(db != null){
+//            db.execSQL(qryAuthentication)
 //            db.execSQL(qryUser)
 
-        }
+//        }
     }
 
     fun addUser(

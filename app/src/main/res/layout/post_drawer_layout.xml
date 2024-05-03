@@ -3,6 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/post_drawer_bg"
+    android:paddingTop="16dp"
+
     android:orientation="vertical">
 
     <TextView
@@ -10,10 +12,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:text="Choose"
+        android:text="@string/choose"
         android:textAlignment="center"
         android:textAllCaps="true"
-        android:textColor="@color/black"
+        android:textColor="?attr/colorPrimary"
         android:textSize="30sp"
         android:textStyle="bold" />
 
@@ -27,16 +29,16 @@
             android:id="@+id/imgPost"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_calender"
-            android:layout_marginLeft="16dp"/>
+            android:src="@drawable/ic_new_post"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtPost"
             android:textSize="20sp"
-            android:text="Post"
-            android:layout_marginLeft="16dp"/>
+            android:text="@string/post"
+            android:layout_marginStart="16dp"/>
 
 
     </LinearLayout>
@@ -51,16 +53,16 @@
             android:id="@+id/imgPoll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_chat"
-            android:layout_marginLeft="16dp"/>
+            android:src="@drawable/ic_new_poll"
+            android:layout_marginStart="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/txtPoll"
             android:textSize="20sp"
-            android:text="Poll"
-            android:layout_marginLeft="16dp"/>
+            android:text="@string/poll"
+            android:layout_marginStart="16dp"/>
 
 
     </LinearLayout>

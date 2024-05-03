@@ -6,7 +6,8 @@
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/my_secondary</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorTertiary">#DCDCDC</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/my_primary</item>
         <!-- Customize your theme here. -->

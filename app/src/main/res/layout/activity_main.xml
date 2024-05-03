@@ -13,7 +13,7 @@
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
         app:title="@string/app_name"
-        app:titleTextColor="@color/white"
+        app:titleTextColor="?attr/colorTertiary"
         app:logo="@drawable/ic_chat_white_32"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintEnd_toEndOf="parent"

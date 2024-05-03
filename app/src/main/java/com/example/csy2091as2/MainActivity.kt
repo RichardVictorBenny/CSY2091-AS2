@@ -1,6 +1,7 @@
 package com.example.csy2091as2
 
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -19,6 +20,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.csy2091as2.databinding.ActivityMainBinding
+import java.util.jar.Attributes
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,7 +70,11 @@ class MainActivity : AppCompatActivity() {
         val poll: LinearLayout = dialog.findViewById(R.id.layPoll)
         
         post.setOnClickListener{
-            Toast.makeText(applicationContext, "Make new post", Toast.LENGTH_SHORT).show()
+//            Toast.makeText(applicationContext, "Make new post", Toast.LENGTH_SHORT).show()
+            val activity = Intent(this, PostActivity::class.java)
+            activity.putExtra("usertype", intent.getStringExtra("usertype"))
+            activity.putExtra("username", intent.getStringExtra("username"))
+            startActivity(activity)
         }
         
         poll.setOnClickListener{
@@ -77,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.WHITE))
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
 

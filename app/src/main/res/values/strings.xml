@@ -35,6 +35,11 @@
     <string name="btmPost">Post</string>
     <string name="btmGroups">Groups</string>
     <string name="btmAccount">Account</string>
+    <string name="choose">Choose</string>
+    <string name="post">Post</string>
+    <string name="poll">Poll</string>
+    <string name="new_post">New Post</string>
+    <string name="post_caption">Write caption here...</string>
 
 
 </resources>
