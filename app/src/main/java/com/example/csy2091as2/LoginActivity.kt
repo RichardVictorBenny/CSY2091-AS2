@@ -1,10 +1,12 @@
 package com.example.csy2091as2
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.TextView
 import android.widget.Toast
 import com.example.csy2091as2.Functions.Hashing
@@ -17,6 +19,22 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+
+
+        val sharedPref = getSharedPreferences("userinfo", Context.MODE_PRIVATE)
+//        val editor = sharedPref.edit()
+//        editor.clear()
+//        editor.commit()
+
+        if(sharedPref.contains("username") && sharedPref.contains("usertype")){
+            if(sharedPref.getString("usertype", null) == "student"){
+                val activity = Intent(this, MainActivity::class.java)
+                activity.putExtra("usertype", "student")
+                activity.putExtra("username", sharedPref.getString("username", null))
+                startActivity(activity)
+            }
+        }
+
         val db = DBHelper(this)
         val validation = Validations()
         val txtSignUp:TextView = findViewById(R.id.textViewSignUp)
@@ -24,6 +42,7 @@ class LoginActivity : AppCompatActivity() {
         val edtPassword: TextInputEditText = findViewById(R.id.inpedtPassword)
         val layUserName: TextInputLayout = findViewById(R.id.inplayUsername)
         val layPassword: TextInputLayout = findViewById(R.id.inplayPassword)
+        val chkSaveUser: CheckBox = findViewById(R.id.chkSaveUser)
 
         val btnLogin: Button = findViewById(R.id.btn_login)
 
@@ -48,9 +67,15 @@ class LoginActivity : AppCompatActivity() {
                 edtUserName.setText("")
                 edtPassword.setText("")
 
-                // TODO: add shared preference
                 val activity = Intent(this, MainActivity::class.java)
                 activity.putExtra("usertype", "student")
+                    if(chkSaveUser.isChecked){
+                        val userInfo = this.getSharedPreferences("userinfo", Context.MODE_PRIVATE)
+                        val editor = userInfo.edit()
+                        editor.putString("username", username)
+                        editor.putString("usertype", "student")
+                        editor.apply()
+                    }
                 startActivity(activity)
             } else {
                 layPassword.error = " "

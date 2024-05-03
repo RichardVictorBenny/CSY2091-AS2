@@ -10,7 +10,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * the method takes in username and password, and then runs them through a hashing alogrithm. 
  * outputs the encoded password as a string.
- * reference: <a href="https://www.baeldung.com/java-password-hashing">...</a>, <a href="https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha-256-in-java">...</a>
+ * reference: <a href="https://www.baeldung.com/java-password-hashing"> 1 </a>, <a href="https://stackoverflow.com/questions/5531455/how-to-hash-some-string-with-sha-256-in-java"> 2 </a>
  * made for AS2 of CSY2094
  *
  * @author Richard

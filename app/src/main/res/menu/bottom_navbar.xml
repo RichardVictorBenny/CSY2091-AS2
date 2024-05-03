@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:title="@string/btmHome"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:id="@+id/btmHome" />
+    <item
+        android:id="@+id/btmChat"
+        android:icon="@drawable/ic_chat"
+        android:title="@string/btmChat" />
+    <item
+        android:id="@+id/btmPost"
+        android:title="Post"
+        android:icon="@drawable/ic_post_32"/>
+    <item android:icon="@drawable/ic_group"
+        android:title="@string/btmGroups"
+        android:id="@+id/btmGroup"/>
+    <item android:id="@+id/btmAccount"
+        android:icon="@drawable/ic_account"
+        android:title="@string/btmAccount"/>
+
+
+</menu>

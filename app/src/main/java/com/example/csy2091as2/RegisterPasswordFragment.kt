@@ -2,6 +2,7 @@ package com.example.csy2091as2
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -53,25 +54,29 @@ class RegisterPasswordFragment : Fragment() {
         }
 
 
-        btnRegisterAccount.setOnClickListener{
+        btnRegisterAccount.setOnClickListener {
+
             validation.emptyCheck(layUsername, edtUsername)
             validation.emptyCheck(layPassword, edtPassword)
             validation.emptyCheck(layConfirmPassword, edtConfirmPassword)
             validation.checkForSpecialChars(layUsername, edtUsername.text.toString())
 
+            layUsername.error =
+                if (db.userCheck(edtUsername.text.toString())) "Username taken" else null
 
-            layUsername.error = if(db.userCheck(edtUsername.text.toString())) "Username taken" else null
 
-            if(edtPassword.text.toString() != edtConfirmPassword.text.toString()){
+            if (edtPassword.text.toString() != edtConfirmPassword.text.toString()) {
                 layPassword.error = "passwords do not match"
                 layConfirmPassword.error = "passwords do not match"
+            } else if (edtPassword.text.toString() == "") {
+                layPassword.error = "Can't be empty"
+                layConfirmPassword.error = "Can't be empty"
             } else {
                 layPassword.error = null
                 layConfirmPassword.error = null
             }
 
-
-            if(layUsername.error == null && layPassword.error == null && layConfirmPassword.error == null ){
+            if (layUsername.error == null && layPassword.error == null && layConfirmPassword.error == null) {
                 val firstName = bundle?.getString("firstname")
                 val middleName = bundle?.getString("middlename")
                 val lastName = bundle?.getString("lastname")
@@ -80,18 +85,26 @@ class RegisterPasswordFragment : Fragment() {
                 val userName = edtUsername.text.toString()
                 val password = Hashing.doHashing(edtPassword.text.toString(), userName)
                 // TODO: make account
-                val result:Array<Long> = db.addUser(userName, firstName, middleName, lastName, email, dateOfBirth, password)
-            if(result[0]>0){
-                Toast.makeText(requireContext(), "User Added", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(requireContext(), LoginActivity::class.java))
-            } else if(result[1]>0){
-                Toast.makeText(requireContext(), "User Authenticated", Toast.LENGTH_SHORT).show()
-            } else{
-                Toast.makeText(requireContext(), "Unsuccessful", Toast.LENGTH_SHORT).show()
-            }
+                val result: Array<Long> = db.addUser(
+                    userName,
+                    firstName,
+                    middleName,
+                    lastName,
+                    email,
+                    dateOfBirth,
+                    password
+                )
+                if (result[0] > 0) {
+                    Toast.makeText(requireContext(), "User Added", Toast.LENGTH_SHORT).show()
+                    startActivity(Intent(requireContext(), LoginActivity::class.java))
+                } else if (result[1] > 0) {
+                    Toast.makeText(requireContext(), "User Authenticated", Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    Toast.makeText(requireContext(), "Unsuccessful", Toast.LENGTH_SHORT).show()
+                }
             }
         }
-
 
 
 //        if(bundle?.getString("firstname") != null){
@@ -99,9 +112,6 @@ class RegisterPasswordFragment : Fragment() {
 //        } else{
 //            Log.d("TAG", "onCreateView: not found")
 //        }
-
-
-
 
 
         return view
