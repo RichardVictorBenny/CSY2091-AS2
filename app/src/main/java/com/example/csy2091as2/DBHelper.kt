@@ -5,10 +5,11 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.csy2091as2.Functions.Functions
+import java.time.LocalDateTime
 
 class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
     companion object{
-        const val DATABASE_VERSION = 8
+        const val DATABASE_VERSION = 11
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -26,29 +27,39 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val colUserDateCreated = "UserDateCreated"
         val colUserDateUpdated = "UserDateUpdated"
 
+        val tblPost = "tblPost"
+        val colPostID = "PostID"
+        val colPostUsername = "PostUsername"
+        val colPostTime = "PostTime"
+        val colPostDesc = "PostDesc"
+        val colPostImage = "PostImage"
+        val colPostApproval = "PostApproval"
+
+
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
         val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colAuthUserName+" TEXT, "+ colAuthPassword + " TEXT, $colAuthType TEXT)"
         val qryUser = "CREATE TABLE " + tblUsers + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT,  "+ colAuthUserName + " TEXT, "+ colUserFirstName+" TEXT, "+
                 colUserMiddleName+" TEXT, "+ colUserLastName+" TEXT, "+ colUserDOB+" TEXT, "+ colUserEmail+" TEXT, "+ colUserDateCreated+" TEXT, "+ colUserDateUpdated+" TEXT)"
+        val qryPost = "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime DATETIME NOT NULL, $colPostDesc TEXT, $colPostImage TEXT)"
 
 //        if (db != null){
 //            db.execSQL(qryUser)
 //            db.execSQL(qryAuthentication)
+//            db.execSQL(qryPost)
 //        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-//        val qryUser = "DROP TABLE IF EXISTS " + tblUsers
-//        val qryAuthentication = "ALTER TABLE $tblAuthentication ADD COLUMN $colAuthType TEXT DEFAULT 'student'"
-//        val qryAuthentication = "DELETE FROM $tblAuthentication WHERE $colUserID = '3'"
-//
-//        if(db != null){
-//            db.execSQL(qryAuthentication)
-//            db.execSQL(qryUser)
+        val qry = "DROP TABLE $tblPost"
+        val qryPost = "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
 
-//        }
+        if(db != null){
+            db.execSQL(qry)
+            db.execSQL(qryPost)
+
+        }
     }
 
     fun addUser(
@@ -108,6 +119,23 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         cursor.close()
 
         return result
+
+
+    }
+
+    fun addPost(username: String, desc: String, imagePath: String): Long {
+        val dateTime = LocalDateTime.now().toString()
+
+
+        val db = this.writableDatabase
+        val postValues = ContentValues()
+        postValues.put(colPostUsername, username)
+        postValues.put(colPostTime, dateTime)
+        postValues.put(colPostDesc, desc)
+        postValues.put(colPostImage, imagePath)
+        postValues.put(colPostApproval, 1)
+
+        return db.insert(tblPost, null, postValues)
 
 
     }

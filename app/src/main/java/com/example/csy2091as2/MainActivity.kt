@@ -1,10 +1,12 @@
 package com.example.csy2091as2
 
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
@@ -25,6 +27,8 @@ import java.util.jar.Attributes
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var userType: String
+    private lateinit var userName: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,7 +39,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.background = null
 
-        val userType = intent.getStringExtra("usertype")
+        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
+//        userType = intent.getStringExtra("usertype").toString()
+//        userName = intent.getStringExtra("username").toString()
+        userType = sharedPreferences.getString("usertype", null).toString()
+        userName = sharedPreferences.getString("username", null).toString()
+        Log.d("TAG", "MainActivity username: $userName")
+        Log.d("TAG", "MainActivity username: $userType")
 
         replaceFragment(HomeFragment())
 
@@ -72,8 +82,9 @@ class MainActivity : AppCompatActivity() {
         post.setOnClickListener{
 //            Toast.makeText(applicationContext, "Make new post", Toast.LENGTH_SHORT).show()
             val activity = Intent(this, PostActivity::class.java)
-            activity.putExtra("usertype", intent.getStringExtra("usertype"))
-            activity.putExtra("username", intent.getStringExtra("username"))
+
+            activity.putExtra("usertype", userType)
+            activity.putExtra("username", userName)
             startActivity(activity)
         }
         

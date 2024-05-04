@@ -2,6 +2,7 @@ package com.example.csy2091as2
 
 import android.R
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -15,24 +16,33 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
+import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Validations
 import com.example.csy2091as2.databinding.ActivityPostBinding
+import com.github.drjacky.imagepicker.ImagePicker
+import com.github.drjacky.imagepicker.constant.ImageProvider
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.OutputStream
 import java.net.URI
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostBinding
     private lateinit var photo: File
     private lateinit var photoURI: Uri
     private val validaiton = Validations()
+    private val db = DBHelper(this)
+    private val functions = Functions()
+    private lateinit var  username: String
+    private lateinit var FILE_NAME: String
 
 
     companion object {
         val GALLERY_REQUEST_CODE = 100
         val CAMERA_REQUEST_CODE = 123
-        val FILE_NAME = "photo.jpg" /* TODO: name should be randomissed*/
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,24 +50,43 @@ class PostActivity : AppCompatActivity() {
         binding = ActivityPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //getting username
+        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)\
+        username = sharedPreferences.getString("username", null).toString()
+        FILE_NAME = functions.generateRandomName(username)
+
         binding.imgPost.setOnClickListener {
             showOptionDialogBox()
+
+
         }
+
 
         binding.btnPost.setOnClickListener {
             validaiton.emptyCheck(binding.inplayPostDesp, binding.inpedtPostDesp)
 
             if (binding.inplayPostDesp.error == null) {
                 try {
+
                     val inputStream = contentResolver.openInputStream(photoURI)
                     val imgFolder = File(filesDir.absolutePath, "Pictures")
-                    if (imgFolder.exists()) {
-                        val outputStream = FileOutputStream(File(imgFolder, FILE_NAME))
+                    var outputStream : OutputStream? = null
+                    val desc = binding.inpedtPostDesp.text.toString()
 
+
+                    if (imgFolder.exists()) {
+                        outputStream = FileOutputStream(File(imgFolder, FILE_NAME))
                         inputStream?.use { input ->
                             outputStream.use { output ->
                                 input.copyTo(output)
                             }
+                        }
+                        val imagePath = File(imgFolder, FILE_NAME).absolutePath
+
+                        if(db.addPost(username, desc, imagePath) != -1L){
+                            Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()
                         }
                     }
                 } catch (_: UninitializedPropertyAccessException) {
@@ -65,11 +94,8 @@ class PostActivity : AppCompatActivity() {
                 }
 
 
-                val username = intent.getStringExtra("username")
-                Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
 
-                // TODO: make database
-                // TODO: add the username, datetime, desc, imagePath, postID, tokenOfApproval
+                finish()
                 // TODO: go to account page or home page to see the post
             }
         }

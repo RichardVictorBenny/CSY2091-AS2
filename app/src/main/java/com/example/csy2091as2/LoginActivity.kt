@@ -27,12 +27,10 @@ class LoginActivity : AppCompatActivity() {
 //        editor.commit()
 
         if(sharedPref.contains("username") && sharedPref.contains("usertype")){
-            if(sharedPref.getString("usertype", null) == "student"){
                 val activity = Intent(this, MainActivity::class.java)
-                activity.putExtra("usertype", "student")
+                activity.putExtra("usertype", sharedPref.getString("usertype", null))
                 activity.putExtra("username", sharedPref.getString("username", null))
                 startActivity(activity)
-            }
         }
 
         val db = DBHelper(this)
@@ -64,11 +62,19 @@ class LoginActivity : AppCompatActivity() {
 
 
             if(userType=="student"){
+                //making a file with username and access level for global access.
+                val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE)
+                val editor = userInfo.edit()
+                editor.putString("username", username)
+                editor.putString("usertype", "student")
+                editor.apply()
+
                 edtUserName.setText("")
                 edtPassword.setText("")
 
                 val activity = Intent(this, MainActivity::class.java)
                 activity.putExtra("usertype", "student")
+                activity.putExtra("username", username)
                     if(chkSaveUser.isChecked){
                         val userInfo = this.getSharedPreferences("userinfo", Context.MODE_PRIVATE)
                         val editor = userInfo.edit()

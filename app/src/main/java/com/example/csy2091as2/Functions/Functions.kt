@@ -1,9 +1,11 @@
 package com.example.csy2091as2.Functions
 
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
+import kotlin.random.Random
 
 class Functions {
 
@@ -34,5 +36,12 @@ class Functions {
 
         // original if non matches
         return dateString
+    }
+
+    fun generateRandomName(username: String): String {
+        val currentDateTime = LocalDateTime.now()
+        val formattedDateTime = currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
+        val randomSuffix = Random.nextInt(100000) // Generate a random number between 0 and 999
+        return "$formattedDateTime-$username-$randomSuffix.jpg"
     }
 }
