@@ -5,11 +5,13 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.csy2091as2.Functions.Functions
+import com.example.csy2091as2.Functions.Post
 import java.time.LocalDateTime
 
-class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION){
-    companion object{
-        const val DATABASE_VERSION = 11
+class DBHelper(context: Context) :
+    SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
+    companion object {
+        const val DATABASE_VERSION = 12
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -31,6 +33,7 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val colPostID = "PostID"
         val colPostUsername = "PostUsername"
         val colPostTime = "PostTime"
+        val colPostUpdateTime = "PostUpdateTime"
         val colPostDesc = "PostDesc"
         val colPostImage = "PostImage"
         val colPostApproval = "PostApproval"
@@ -39,10 +42,13 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val qryAuthentication = "CREATE TABLE " + tblAuthentication + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT, "+ colAuthUserName+" TEXT, "+ colAuthPassword + " TEXT, $colAuthType TEXT)"
-        val qryUser = "CREATE TABLE " + tblUsers + "("+ colUserID+" INTEGER PRIMARY KEY AUTOINCREMENT,  "+ colAuthUserName + " TEXT, "+ colUserFirstName+" TEXT, "+
-                colUserMiddleName+" TEXT, "+ colUserLastName+" TEXT, "+ colUserDOB+" TEXT, "+ colUserEmail+" TEXT, "+ colUserDateCreated+" TEXT, "+ colUserDateUpdated+" TEXT)"
-        val qryPost = "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime DATETIME NOT NULL, $colPostDesc TEXT, $colPostImage TEXT)"
+        val qryAuthentication =
+            "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT)"
+        val qryUser =
+            "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
+                    colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
+        val qryPost =
+            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
 
 //        if (db != null){
 //            db.execSQL(qryUser)
@@ -53,9 +59,10 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         val qry = "DROP TABLE $tblPost"
-        val qryPost = "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
+        val qryPost =
+            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
 
-        if(db != null){
+        if (db != null) {
             db.execSQL(qry)
             db.execSQL(qryPost)
 
@@ -70,7 +77,7 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         email: String?,
         dob: String?,
         password: String
-        ): Array<Long>{
+    ): Array<Long> {
 
         // gets the current date
         val functions = Functions()
@@ -93,29 +100,31 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         userCred.put(colAuthPassword, password)
 
 
-        val statusUser =  db.insert(tblUsers, null, userValues)
+        val statusUser = db.insert(tblUsers, null, userValues)
         val statusCred = db.insert(tblAuthentication, null, userCred)
-        return arrayOf(statusUser,statusCred)
+        return arrayOf(statusUser, statusCred)
 //        return arrayOf(statusCred)
     }
 
-    fun authenticate(username: String, password: String): String?{
+    fun authenticate(username: String, password: String): String? {
 
         val db: SQLiteDatabase = this.readableDatabase
-        val query = "SELECT * FROM "+ tblAuthentication +" WHERE "+ colAuthUserName + " = ? AND "+ colAuthPassword+" = ?"
+        val query =
+            "SELECT * FROM " + tblAuthentication + " WHERE " + colAuthUserName + " = ? AND " + colAuthPassword + " = ?"
         val cursor = db.rawQuery(query, arrayOf(username, password))
-        val result = if(cursor.moveToNext()) cursor.getString(cursor.getColumnIndexOrThrow(colAuthType)) else null
+        val result =
+            if (cursor.moveToNext()) cursor.getString(cursor.getColumnIndexOrThrow(colAuthType)) else null
         cursor.close()
 
         return result
     }
 
-    fun userCheck(username: String): Boolean{
+    fun userCheck(username: String): Boolean {
         val db = this.readableDatabase
         val query = "SELECT * FROM $tblAuthentication WHERE $colAuthUserName = ?"
 
         val cursor = db.rawQuery(query, arrayOf(username))
-        val result = cursor.count>0
+        val result = cursor.count > 0
         cursor.close()
 
         return result
@@ -123,7 +132,7 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
 
     }
 
-    fun addPost(username: String, desc: String, imagePath: String): Long {
+    fun addPost(username: String, desc: String, imagePath: String?): Long {
         val dateTime = LocalDateTime.now().toString()
 
 
@@ -131,6 +140,7 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         val postValues = ContentValues()
         postValues.put(colPostUsername, username)
         postValues.put(colPostTime, dateTime)
+        postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
         postValues.put(colPostImage, imagePath)
         postValues.put(colPostApproval, 1)
@@ -138,5 +148,25 @@ class DBHelper (context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, nul
         return db.insert(tblPost, null, postValues)
 
 
+    }
+
+    fun getPost10(): MutableList<Post> {
+        var postList = mutableListOf<Post>()
+        val db = this.readableDatabase
+        val query =
+            "SELECT * FROM $tblPost WHERE $colPostApproval = 1 ORDER BY $colPostID DESC LIMIT 10"
+        val cursor = db.rawQuery(query, null)
+        if (cursor.moveToFirst()) {
+            do {
+                val postId: Int = cursor.getInt(cursor.getColumnIndexOrThrow(colPostID))
+                val username = cursor.getString(cursor.getColumnIndexOrThrow(colPostUsername))
+                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(colPostImage))
+                val txtDesp = cursor.getString(cursor.getColumnIndexOrThrow(colPostDesc))
+                postList.add(Post(postId, username, imgPath, txtDesp))
+
+            } while (cursor.moveToNext())
+        }
+
+        return postList
     }
 }

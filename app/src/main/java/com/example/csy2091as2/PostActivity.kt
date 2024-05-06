@@ -28,6 +28,7 @@ import java.io.OutputStream
 import java.net.URI
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.log
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostBinding
@@ -51,7 +52,7 @@ class PostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         //getting username
-        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)\
+        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
         username = sharedPreferences.getString("username", null).toString()
         FILE_NAME = functions.generateRandomName(username)
 
@@ -66,12 +67,15 @@ class PostActivity : AppCompatActivity() {
             validaiton.emptyCheck(binding.inplayPostDesp, binding.inpedtPostDesp)
 
             if (binding.inplayPostDesp.error == null) {
+                var desc: String = binding.inpedtPostDesp.text.toString()
+                var imagePath: String? = ""
+
                 try {
 
                     val inputStream = contentResolver.openInputStream(photoURI)
                     val imgFolder = File(filesDir.absolutePath, "Pictures")
                     var outputStream : OutputStream? = null
-                    val desc = binding.inpedtPostDesp.text.toString()
+
 
 
                     if (imgFolder.exists()) {
@@ -81,17 +85,23 @@ class PostActivity : AppCompatActivity() {
                                 input.copyTo(output)
                             }
                         }
-                        val imagePath = File(imgFolder, FILE_NAME).absolutePath
+                        imagePath = File(imgFolder, FILE_NAME).absolutePath
 
-                        if(db.addPost(username, desc, imagePath) != -1L){
-                            Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()
-                        }
+
                     }
-                } catch (_: UninitializedPropertyAccessException) {
-                } catch (_: Exception) {
+
+                } catch (e: UninitializedPropertyAccessException) {
+//                    Log.d("TAG", e.toString())
+                } catch (e: Exception) {
+//                    Log.d("TAG", e.toString())
                 }
+
+                if(db.addPost(username, desc!!, imagePath) != -1L){
+                    Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()
+                }
+
 
 
 

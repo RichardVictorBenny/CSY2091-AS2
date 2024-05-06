@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity() {
 //        userName = intent.getStringExtra("username").toString()
         userType = sharedPreferences.getString("usertype", null).toString()
         userName = sharedPreferences.getString("username", null).toString()
-        Log.d("TAG", "MainActivity username: $userName")
-        Log.d("TAG", "MainActivity username: $userType")
+//        Log.d("TAG", "MainActivity username: $userName")
+//        Log.d("TAG", "MainActivity username: $userType")
 
         replaceFragment(HomeFragment())
 
