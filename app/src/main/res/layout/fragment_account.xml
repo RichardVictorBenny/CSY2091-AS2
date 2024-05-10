@@ -55,6 +55,7 @@
                 android:layout_margin="16dp"
                 android:text="@string/logout"/>
         </RelativeLayout>
+        c
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

@@ -2,7 +2,6 @@ package com.example.csy2091as2
 
 import android.R
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -12,24 +11,17 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.ArrayAdapter
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.content.FileProvider
-import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Post
 import com.example.csy2091as2.Functions.Validations
 import com.example.csy2091as2.databinding.ActivityPostBinding
-import com.github.drjacky.imagepicker.ImagePicker
-import com.github.drjacky.imagepicker.constant.ImageProvider
 import java.io.File
-import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.net.URI
-import java.time.LocalDate
-import java.time.LocalDateTime
-import kotlin.math.log
 
 class PostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPostBinding
@@ -40,33 +32,55 @@ class PostActivity : AppCompatActivity() {
     private val functions = Functions()
     private lateinit var  username: String
     private lateinit var FILE_NAME: String
+    private lateinit var imagePath: String
+    private lateinit var imgFolder: File
+    private var oldImg: File? = null
 
 
     companion object {
         val GALLERY_REQUEST_CODE = 100
         val CAMERA_REQUEST_CODE = 123
+        var POST_ID = 0
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+//       setting a locaiton for images to be stored.
+        imgFolder = File(filesDir.absolutePath, "Pictures")
 //getting username
         val userInfo = Functions.getUserinfo(this)
         username = userInfo.get("username")!!
         val userType = userInfo.get("usertype")!!
 
 
+//        checking if the post is being edited or newly made
         if(intent.getIntExtra("postId", 0) != 0){
-            val post: Post = db.getPostSingle(intent.getIntExtra("postId", 0))[0]
-            val imageBitmap = BitmapFactory.decodeFile(post.imgPath)
-            val imageFile = File(post.imgPath)
-            FILE_NAME = imageFile.name
-            binding.imgPost.setImageBitmap(imageBitmap)
+            POST_ID = intent.getIntExtra("postId", 0)
+            val post: Post = db.getPostSingle(POST_ID)[0]
+            var imageFile: File? = null
+            val imageBitmap = BitmapFactory.decodeFile(post.postImgPath)
+
+            if(post.postImgPath == ""){
+                FILE_NAME = functions.generateRandomName(username)
+                imageFile = File(imgFolder, "placeholder.jpg")
+                binding.imgPost.setImageURI(imageFile.toUri())
+            } else{
+                imageFile = File(post.postImgPath)
+                oldImg = imageFile
+                FILE_NAME = imageFile.name
+                binding.imgPost.setImageBitmap(imageBitmap)
+            }
+            imagePath = imageFile.absolutePath
+            Log.d("TAG", "onCreate: $imagePath")
+
 
             binding.inpedtPostDesp.setText(post.txtDesp)
         } else {
             FILE_NAME = functions.generateRandomName(username)
+            imagePath = File(imgFolder, "placeholder.jpg").absolutePath
         }
 
 
@@ -76,34 +90,57 @@ class PostActivity : AppCompatActivity() {
 
         binding.imgPost.setOnClickListener {
             showOptionDialogBox()
-
-
         }
 
+        binding.imgPost.setOnLongClickListener{
+            val popUp = PopupMenu(this, it)
+
+            popUp.menu.add("Delete")
+            popUp.show()
+
+            popUp.setOnMenuItemClickListener {
+                when(it.title){
+                    "Delete" -> {
+                        imagePath = File(imgFolder, "placeholder.jpg").absolutePath
+                        binding.imgPost.setImageURI(File(imgFolder, "placeholder.jpg").toUri())
+                    }
+                }
+                true
+            }
+            true
+        }
 
         binding.btnPost.setOnClickListener {
+
             validaiton.emptyCheck(binding.inplayPostDesp, binding.inpedtPostDesp)
 
             if (binding.inplayPostDesp.error == null) {
                 var desc: String = binding.inpedtPostDesp.text.toString()
-                var imagePath: String? = ""
+//                var imagePath: String? = ""
 
+//                goes in here only if any change is made to image.
                 try {
 
                     val inputStream = contentResolver.openInputStream(photoURI)
-                    val imgFolder = File(filesDir.absolutePath, "Pictures")
                     var outputStream : OutputStream? = null
 
-
-
                     if (imgFolder.exists()) {
-                        outputStream = FileOutputStream(File(imgFolder, FILE_NAME))
+                        Log.d("TAG", "onCreate: $FILE_NAME")
+                        val newImage = File(imgFolder, FILE_NAME)
+
+//                        deleting previous image if a new image is selected.
+                        if(oldImg != null && oldImg?.name != newImage.name){
+                            oldImg?.delete()
+                        }
+
+//                        copying image to internal storage.
+                        outputStream = FileOutputStream(newImage)
                         inputStream?.use { input ->
                             outputStream.use { output ->
                                 input.copyTo(output)
                             }
                         }
-                        imagePath = File(imgFolder, FILE_NAME).absolutePath
+                        imagePath = newImage.absolutePath
 
 
                     }
@@ -114,7 +151,12 @@ class PostActivity : AppCompatActivity() {
 //                    Log.d("TAG", e.toString())
                 }
 
-                if(db.addPost(username, desc!!, imagePath) != -1L){
+//                setting imagepath back to empty if no image is added
+                if(imagePath == File(imgFolder, "placeholder.jpg").absolutePath){
+                    imagePath = ""
+                }
+
+                if(db.savePost(POST_ID, username, desc, imagePath) != -1L){
                     Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()
@@ -127,7 +169,12 @@ class PostActivity : AppCompatActivity() {
                 // TODO: go to account page or home page to see the post
             }
         }
+
+        imgFolder.setReadable(false)
+        imgFolder.setWritable(false)
+        imgFolder.setExecutable(false)
     }
+
 
     /**
      * function to give user the option to get images from gallery or camera

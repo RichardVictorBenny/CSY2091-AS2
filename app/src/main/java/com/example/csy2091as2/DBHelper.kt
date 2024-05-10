@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
-        const val DATABASE_VERSION = 12
+        const val DATABASE_VERSION = 13
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -38,17 +38,25 @@ class DBHelper(context: Context) :
         val colPostImage = "PostImage"
         val colPostApproval = "PostApproval"
 
+        val tblComment = "tblComments"
+        val colCommentID = "CommentID"
+        val colCommentAuthor = "CommentAuthor"
+        val colCommentContext = "CommentContent"
+        val colCommentPostId = "CommentPostId"
+        val colCommentParentID = "CommentParent"
+        val colCommentTime = "CommentTime"
+
 
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-        val qryAuthentication =
-            "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT)"
-        val qryUser =
-            "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
-                    colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
-        val qryPost =
-            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
+//        val qryAuthentication =
+//            "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT)"
+//        val qryUser =
+//            "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
+//                    colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
+//        val qryPost =
+//            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
 
 //        if (db != null){
 //            db.execSQL(qryUser)
@@ -58,12 +66,10 @@ class DBHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val qry = "DROP TABLE $tblPost"
         val qryPost =
-            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
+            "CREATE TABLE $tblComment($colCommentID INTEGER PRIMARY KEY AUTOINCREMENT, $colCommentAuthor TEXT, $colCommentContext TEXT, $colCommentPostId INTEGER, $colCommentParentID INTEGER, $colCommentTime TEXT )"
 
         if (db != null) {
-            db.execSQL(qry)
             db.execSQL(qryPost)
 
         }
@@ -132,6 +138,16 @@ class DBHelper(context: Context) :
 
     }
 
+    fun savePost(postId: Int, username: String, desc: String, imagePath: String?) : Long{
+
+        return if(postId == 0){
+            addPost(username, desc, imagePath)
+        } else{
+            updatePost(postId, desc, imagePath).toLong()
+        }
+
+    }
+
     fun addPost(username: String, desc: String, imagePath: String?): Long {
         val dateTime = LocalDateTime.now().toString()
 
@@ -146,6 +162,25 @@ class DBHelper(context: Context) :
         postValues.put(colPostApproval, 1)
 
         return db.insert(tblPost, null, postValues)
+
+
+    }
+
+    fun updatePost(postId: Int, desc: String, imagePath: String?): Int {
+        val dateTime = LocalDateTime.now().toString()
+
+
+        val db = this.writableDatabase
+        val postValues = ContentValues()
+        postValues.put(colPostUpdateTime, dateTime)
+        postValues.put(colPostDesc, desc)
+        postValues.put(colPostImage, imagePath)
+        postValues.put(colPostApproval, 1)
+
+        val where = "$colPostID = ?"
+        val args = arrayOf(postId.toString())
+
+        return db.update(tblPost, postValues, where, args)
 
 
     }

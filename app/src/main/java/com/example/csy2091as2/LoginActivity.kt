@@ -20,22 +20,21 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
 
-
         val sharedPref = getSharedPreferences("userinfo", Context.MODE_PRIVATE)
 //        val editor = sharedPref.edit()
 //        editor.clear()
 //        editor.commit()
 
-        if(sharedPref.contains("username") && sharedPref.contains("usertype")){
-                val activity = Intent(this, MainActivity::class.java)
-                activity.putExtra("usertype", sharedPref.getString("usertype", null))
-                activity.putExtra("username", sharedPref.getString("username", null))
-                startActivity(activity)
+        if (sharedPref.contains("username") && sharedPref.contains("usertype")) {
+            val activity = Intent(this, MainActivity::class.java)
+            activity.putExtra("usertype", sharedPref.getString("usertype", null))
+            activity.putExtra("username", sharedPref.getString("username", null))
+            startActivity(activity)
         }
 
         val db = DBHelper(this)
         val validation = Validations()
-        val txtSignUp:TextView = findViewById(R.id.textViewSignUp)
+        val txtSignUp: TextView = findViewById(R.id.textViewSignUp)
         val edtUserName: TextInputEditText = findViewById(R.id.inpedtUsername)
         val edtPassword: TextInputEditText = findViewById(R.id.inpedtPassword)
         val layUserName: TextInputLayout = findViewById(R.id.inplayUsername)
@@ -52,36 +51,35 @@ class LoginActivity : AppCompatActivity() {
 
         }
 
-        btnLogin.setOnClickListener{
+        btnLogin.setOnClickListener {
 
             validation.emptyCheck(layUserName, edtUserName)
             validation.emptyCheck(layPassword, edtPassword)
-            
+
             val username = edtUserName.text.toString()
-            val userType = db.authenticate(username, Hashing.doHashing(edtPassword.text.toString(), username))
+            val userType =
+                db.authenticate(username, Hashing.doHashing(edtPassword.text.toString(), username))
 
 
-            if(userType=="student"){
+            if (userType == "student" || userType == "admin") {
                 //making a file with username and access level for global access.
                 val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE)
                 val editor = userInfo.edit()
                 editor.putString("username", username)
-                editor.putString("usertype", "student")
+                editor.putString("usertype", userType)
                 editor.apply()
 
                 edtUserName.setText("")
                 edtPassword.setText("")
 
                 val activity = Intent(this, MainActivity::class.java)
-                activity.putExtra("usertype", "student")
-                activity.putExtra("username", username)
-                    if(chkSaveUser.isChecked){
-                        val userInfo = this.getSharedPreferences("userinfo", Context.MODE_PRIVATE)
-                        val editor = userInfo.edit()
-                        editor.putString("username", username)
-                        editor.putString("usertype", "student")
-                        editor.apply()
-                    }
+                if (chkSaveUser.isChecked) {
+                    val userInfo = this.getSharedPreferences("userinfo", Context.MODE_PRIVATE)
+                    val editor = userInfo.edit()
+                    editor.putString("username", username)
+                    editor.putString("usertype", userType)
+                    editor.apply()
+                }
                 startActivity(activity)
             } else {
                 layPassword.error = " "

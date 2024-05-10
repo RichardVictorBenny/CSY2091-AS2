@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.LinearLayout
@@ -21,6 +22,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.csy2091as2.Admin.AdminOptionFragment
 import com.example.csy2091as2.databinding.ActivityMainBinding
 import java.util.jar.Attributes
 
@@ -32,6 +34,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
+        userType = sharedPreferences.getString("usertype", null).toString()
+        userName = sharedPreferences.getString("username", null).toString()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -39,13 +46,14 @@ class MainActivity : AppCompatActivity() {
 
         binding.bottomNavigationView.background = null
 
-        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
-//        userType = intent.getStringExtra("usertype").toString()
-//        userName = intent.getStringExtra("username").toString()
-        userType = sharedPreferences.getString("usertype", null).toString()
-        userName = sharedPreferences.getString("username", null).toString()
-//        Log.d("TAG", "MainActivity username: $userName")
-//        Log.d("TAG", "MainActivity username: $userType")
+//         making options for admins visible
+        if(userType == "admin"){
+            binding.imgAdminOptions.visibility = View.VISIBLE
+            binding.imgAdminOptions.setOnClickListener{
+                replaceFragment(AdminOptionFragment())
+            }
+        }
+
 
         replaceFragment(HomeFragment())
 

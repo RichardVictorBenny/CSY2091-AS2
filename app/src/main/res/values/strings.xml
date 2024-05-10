@@ -41,6 +41,7 @@
     <string name="new_post">New Post</string>
     <string name="post_caption">Write caption here...</string>
     <string name="logout">Logout</string>
+    <string name="postInstructions">Tap on the image selector to pick an image.\nLongpress for moreOptions</string>
 
 
 </resources>

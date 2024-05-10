@@ -4,9 +4,6 @@ package com.example.csy2091as2
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.opengl.Visibility
-import android.provider.CalendarContract.Events
-import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,10 +11,7 @@ import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.net.toUri
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.csy2091as2.Functions.Post
 
 
@@ -27,6 +21,7 @@ class HomeFragAdapter(
     private val userInfo: Map<String, String>
 
 ): RecyclerView.Adapter<HomeFragAdapter.ViewHolder>() {
+
 
     private lateinit var db: DBHelper
 
@@ -56,7 +51,7 @@ class HomeFragAdapter(
 
     override fun onBindViewHolder(holder: HomeFragAdapter.ViewHolder, position: Int) {
         db = DBHelper(context)
-        val imgPath = dataset[position].imgPath
+        val imgPath = dataset[position].postImgPath
 //        holder.btnLike.setImageResource(LIKE_ON)
 //        holder.btnLike.tag = LIKE_ON
 
@@ -76,7 +71,7 @@ class HomeFragAdapter(
 
         if(imgPath != ""){
             try {
-                val imageBitmap = BitmapFactory.decodeFile(dataset[position].imgPath)
+                val imageBitmap = BitmapFactory.decodeFile(dataset[position].postImgPath)
                 holder.imgPost.setImageBitmap(imageBitmap)
             } catch (_: Exception){
 
