@@ -151,11 +151,35 @@ class DBHelper(context: Context) :
     }
 
     fun getPost10(): MutableList<Post> {
-        var postList = mutableListOf<Post>()
-        val db = this.readableDatabase
         val query =
             "SELECT * FROM $tblPost WHERE $colPostApproval = 1 ORDER BY $colPostID DESC LIMIT 10"
-        val cursor = db.rawQuery(query, null)
+        return getPost(query, null)
+
+    }
+
+    fun getPostUser(username: String): MutableList<Post>{
+        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = 1 AND $colPostUsername = ? ORDER BY $colPostID DESC"
+        val args = arrayOf(username)
+        return getPost(query, args)
+    }
+
+    fun getPostSingle(postId: Int): MutableList<Post>{
+        val query = "SELECT * FROM $tblPost WHERE $colPostID = ?"
+        val args = arrayOf(postId.toString())
+        return getPost(query, args)
+    }
+
+    fun deletePost(postId: Int): Int {
+        val db = this.writableDatabase
+        val where = "$colPostID = ?"
+        val args = arrayOf(postId.toString())
+        return db.delete(tblPost, where, args)
+    }
+
+    private fun getPost(query: String, args: Array<String>?): MutableList<Post>{
+        var postList = mutableListOf<Post>()
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(query, args)
         if (cursor.moveToFirst()) {
             do {
                 val postId: Int = cursor.getInt(cursor.getColumnIndexOrThrow(colPostID))

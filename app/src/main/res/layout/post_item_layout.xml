@@ -34,10 +34,18 @@
             android:text="@string/username"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="10dp"
             android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
+            android:layout_toStartOf="@id/imgMoreOptions"
             />
+
+        <ImageView
+            android:id="@+id/imgMoreOptions"
+            android:layout_width="25dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_more_opt_vrt"
+            android:layout_alignParentEnd="true"
+            android:visibility="invisible"/>
 
 
         

@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.btmHome -> replaceFragment(HomeFragment())
                 R.id.btmChat -> null
                 R.id.btmGroup -> null
-                R.id.btmAccount -> null
+                R.id.btmAccount -> replaceFragment(AccountFragment())
                 R.id.btmPost -> openDrawer() // make new activity for polls etc.
             }
             true

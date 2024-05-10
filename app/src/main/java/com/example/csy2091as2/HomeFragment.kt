@@ -1,12 +1,14 @@
 package com.example.csy2091as2
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.csy2091as2.Functions.Functions
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,6 +27,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val userInfo = Functions.getUserinfo(requireContext())
         db = DBHelper(requireContext())
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
@@ -32,7 +35,7 @@ class HomeFragment : Fragment() {
         val rvHomeFrag = view.findViewById<RecyclerView>(R.id.rvHomeFrag)
         rvHomeFrag.layoutManager = LinearLayoutManager(requireContext())
         var posts = db.getPost10()
-        rvHomeFrag.adapter = HomeFragAdapter(posts)
+        rvHomeFrag.adapter = HomeFragAdapter(posts,requireContext(), userInfo)
 
         return view
     }

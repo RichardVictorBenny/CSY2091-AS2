@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import com.example.csy2091as2.Functions.Functions
+import com.example.csy2091as2.Functions.Post
 import com.example.csy2091as2.Functions.Validations
 import com.example.csy2091as2.databinding.ActivityPostBinding
 import com.github.drjacky.imagepicker.ImagePicker
@@ -50,11 +51,28 @@ class PostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
+//getting username
+        val userInfo = Functions.getUserinfo(this)
+        username = userInfo.get("username")!!
+        val userType = userInfo.get("usertype")!!
 
-        //getting username
-        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
-        username = sharedPreferences.getString("username", null).toString()
-        FILE_NAME = functions.generateRandomName(username)
+
+        if(intent.getIntExtra("postId", 0) != 0){
+            val post: Post = db.getPostSingle(intent.getIntExtra("postId", 0))[0]
+            val imageBitmap = BitmapFactory.decodeFile(post.imgPath)
+            val imageFile = File(post.imgPath)
+            FILE_NAME = imageFile.name
+            binding.imgPost.setImageBitmap(imageBitmap)
+
+            binding.inpedtPostDesp.setText(post.txtDesp)
+        } else {
+            FILE_NAME = functions.generateRandomName(username)
+        }
+
+
+
+
+
 
         binding.imgPost.setOnClickListener {
             showOptionDialogBox()
@@ -103,7 +121,7 @@ class PostActivity : AppCompatActivity() {
                 }
 
 
-
+                startActivity(Intent(this, MainActivity::class.java))
 
                 finish()
                 // TODO: go to account page or home page to see the post

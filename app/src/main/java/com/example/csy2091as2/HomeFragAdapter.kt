@@ -1,23 +1,34 @@
 package com.example.csy2091as2
 
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.opengl.Visibility
 import android.provider.CalendarContract.Events
 import android.text.Layout
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.csy2091as2.Functions.Post
 
 
 class HomeFragAdapter(
-    private val dataset: MutableList<Post>
+    private val dataset: MutableList<Post>,
+    private val context: Context,
+    private val userInfo: Map<String, String>
+
 ): RecyclerView.Adapter<HomeFragAdapter.ViewHolder>() {
+
+    private lateinit var db: DBHelper
 
     companion object{
         val LIKE_ON = R.drawable.ic_thumb_up_on_24
@@ -27,12 +38,14 @@ class HomeFragAdapter(
     }
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
+
         val txtUsername = view.findViewById<TextView>(R.id.txtPostUsername)
         val btnLike: ImageView = view.findViewById(R.id.imgPostLike)
         val btnDislike: ImageView = view.findViewById(R.id.imgPostDislike)
         val imgPost: ImageView = view.findViewById(R.id.imgOnPost)
         val btnComment: ImageView = view.findViewById(R.id.imgPostComment)
         val txtDesp: TextView = view.findViewById(R.id.txtPostDesp)
+        val btnMoreOption: ImageView = view.findViewById(R.id.imgMoreOptions)
 
     }
 
@@ -42,6 +55,7 @@ class HomeFragAdapter(
     }
 
     override fun onBindViewHolder(holder: HomeFragAdapter.ViewHolder, position: Int) {
+        db = DBHelper(context)
         val imgPath = dataset[position].imgPath
 //        holder.btnLike.setImageResource(LIKE_ON)
 //        holder.btnLike.tag = LIKE_ON
@@ -49,6 +63,11 @@ class HomeFragAdapter(
         // TODO: just defaults to no likes, need to see if the user already liked and do appropriately, need to block user from liking and dislikeing at the same time
         setButton(holder.btnLike, LIKE_OFF)
         setButton(holder.btnDislike, DISLIKE_OFF)
+
+//        edit button visible only to authors of posts
+        if(dataset[position].username == userInfo.get("username")){
+            holder.btnMoreOption.visibility = View.VISIBLE
+        }
 
         holder.txtUsername.text = dataset[position].username
         holder.txtDesp.text = dataset[position].txtDesp
@@ -86,11 +105,30 @@ class HomeFragAdapter(
 
             }
         }
+
+        holder.btnMoreOption.setOnClickListener{
+                val popUp = PopupMenu(context, it)
+
+                popUp.menu.add("Edit")
+                popUp.menu.add("Delete")
+                popUp.show()
+
+                popUp.setOnMenuItemClickListener {
+                    when(it.title){
+                        "Delete" -> delete(position)
+                        "Edit" -> edit(position)
+                     }
+                    true
+                }
+                true
+        }
         
 
 
 
     }
+
+
 
     private fun openComments(postID: Int) {
 
@@ -99,6 +137,28 @@ class HomeFragAdapter(
     private fun setButton(imgView: ImageView, resource: Int){
         imgView.setImageResource(resource)
         imgView.tag = resource
+    }
+
+    private fun delete(position: Int){
+        if(db.deletePost(dataset[position].postID) == 1){
+            Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
+            refreshRecyclerView(db.getPost10())
+        } else {
+            Toast.makeText(context, "Action Unsuccessful", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun edit(position: Int) {
+        val activity = Intent(context, PostActivity::class.java)
+        activity.putExtra("postId", dataset[position].postID)
+        context.startActivity(activity)
+    }
+
+
+    fun refreshRecyclerView(newData: MutableList<Post>){
+        dataset.clear()
+        dataset.addAll(newData)
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = dataset.size
