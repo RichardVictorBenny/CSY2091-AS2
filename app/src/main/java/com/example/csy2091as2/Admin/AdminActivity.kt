@@ -34,12 +34,32 @@ class AdminActivity : AppCompatActivity() {
         binding.layDeleteStudent.setOnClickListener{
             openDeleteDrawer()
         }
+
+        binding.layUpdatePassword.setOnClickListener{
+            openUpdatePasswordDrawer()
+        }
     }
 
     private fun openDeleteDrawer() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.delete_drawer_layout)
+
+
+
+
+
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun openUpdatePasswordDrawer() {
+        val dialog = Dialog(this)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.update_password_drawer_layout)
 
 
 
