@@ -9,9 +9,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.csy2091as2.Functions.Functions
+import com.example.csy2091as2.Functions.User
 import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
@@ -35,17 +37,24 @@ class AccountFragment : Fragment() {
     ): View? {
 
         val userInfo = Functions.getUserinfo(requireContext())
-        val userName = userInfo.get("username")!!
-        val userType = userInfo.get("usertype")!!
+        val userName = userInfo["username"]!!
+        val userType = userInfo["usertype"]!!
 
-        Log.d("TAG", "onCreateView: $userName")
         val db = DBHelper(requireContext())
         val view =  inflater.inflate(R.layout.fragment_account, container, false)
+
+        val txtUsername = view.findViewById<TextView>(R.id.txtUserUsername)
+        val txtFullname = view.findViewById<TextView>(R.id.txtUserFullName)
+
+        val currentUser = db.fetchUser(userName)
+
+        txtUsername.setText(userName)
+        txtFullname.setText(getFullName(currentUser))
 
         val rvAccFrag = view.findViewById<RecyclerView>(R.id.rvAccountFrag)
         rvAccFrag.layoutManager = LinearLayoutManager(requireContext())
         var posts = db.getPostUser(userName)
-        rvAccFrag.adapter = HomeFragAdapter(posts, requireContext(),  userInfo)
+        rvAccFrag.adapter = HomeFragAdapter(posts, requireContext())
 
 //        sign out user and clear all data saved
         val btnLogout: Button = view.findViewById(R.id.btnLogout)
@@ -59,6 +68,10 @@ class AccountFragment : Fragment() {
 
 
         return view
+    }
+
+    private fun getFullName(user: User): String {
+        return user.firstName+" "+user.lastName
     }
 
 

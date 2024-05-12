@@ -30,9 +30,9 @@
                 android:id="@+id/imgHamburger"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/ic_hamburger_24"
+                android:src="@drawable/ic_edit_32"
                 android:layout_alignParentEnd="true"
-                android:padding="2dp"/>
+                android:padding="14dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -48,14 +48,17 @@
                 android:padding="16dp"/>
 
             <Button
+                android:id="@+id/btnLogout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/btnLogout"
                 android:layout_alignParentEnd="true"
-                android:layout_margin="16dp"
-                android:text="@string/logout"/>
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:text="@string/logout" />
         </RelativeLayout>
-        c
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

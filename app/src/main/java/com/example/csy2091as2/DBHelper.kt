@@ -4,14 +4,18 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.util.Log
+import com.example.csy2091as2.Functions.Comment
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Post
+import com.example.csy2091as2.Functions.User
 import java.time.LocalDateTime
 
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
         const val DATABASE_VERSION = 13
+//        const val DATABASE_VERSION = 1
         const val DATABASE_NAME = "campusconnect"
 
         val tblAuthentication = "tblAuthentication"
@@ -41,7 +45,7 @@ class DBHelper(context: Context) :
         val tblComment = "tblComments"
         val colCommentID = "CommentID"
         val colCommentAuthor = "CommentAuthor"
-        val colCommentContext = "CommentContent"
+        val colCommentContent = "CommentContent"
         val colCommentPostId = "CommentPostId"
         val colCommentParentID = "CommentParent"
         val colCommentTime = "CommentTime"
@@ -50,29 +54,35 @@ class DBHelper(context: Context) :
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
-//        val qryAuthentication =
-//            "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT)"
-//        val qryUser =
-//            "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
-//                    colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
-//        val qryPost =
-//            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
+        val qryAuthentication =
+            "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT DEFAULT student)"
+        val qryUser =
+            "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
+                    colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
+        val qryPost =
+            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER)"
 
-//        if (db != null){
-//            db.execSQL(qryUser)
-//            db.execSQL(qryAuthentication)
-//            db.execSQL(qryPost)
-//        }
+        val qryComment =
+            "CREATE TABLE $tblComment($colCommentID INTEGER PRIMARY KEY AUTOINCREMENT, $colCommentAuthor TEXT, $colCommentContent TEXT, $colCommentPostId INTEGER, $colCommentParentID INTEGER, $colCommentTime TEXT )"
+
+        if (db != null){
+            db.execSQL(qryUser)
+            db.execSQL(qryAuthentication)
+            db.execSQL(qryPost)
+            db.execSQL(qryComment)
+        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val qryPost =
-            "CREATE TABLE $tblComment($colCommentID INTEGER PRIMARY KEY AUTOINCREMENT, $colCommentAuthor TEXT, $colCommentContext TEXT, $colCommentPostId INTEGER, $colCommentParentID INTEGER, $colCommentTime TEXT )"
+//        val qryPost =
+//            "CREATE TABLE $tblComment($colCommentID INTEGER PRIMARY KEY AUTOINCREMENT, $colCommentAuthor TEXT, $colCommentContent TEXT, $colCommentPostId INTEGER, $colCommentParentID INTEGER, $colCommentTime TEXT )"
+//
+//        if (db != null) {
+//            db.execSQL(qryPost)
+//
+//        }
 
-        if (db != null) {
-            db.execSQL(qryPost)
-
-        }
+        onCreate(db)
     }
 
     fun addUser(
@@ -125,6 +135,32 @@ class DBHelper(context: Context) :
         return result
     }
 
+    fun fetchUsername(email: String): String?{
+        val db = this.readableDatabase
+        val query = "SELECT $colAuthUserName FROM $tblUsers WHERE $colUserEmail = ?"
+        val cursor = db.rawQuery(query, arrayOf(email))
+        if(cursor.moveToFirst()){
+            return cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName))
+        } else{
+            return null
+        }
+    }
+
+    fun fetchUser(username: String): User{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName = ?"
+        val cursor = db.rawQuery(query, arrayOf(username))
+        cursor.moveToFirst()
+        return User(
+            cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName)),
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserFirstName)),
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserMiddleName)),
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserLastName)),
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail)),
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB))
+        )
+    }
+
     fun userCheck(username: String): Boolean {
         val db = this.readableDatabase
         val query = "SELECT * FROM $tblAuthentication WHERE $colAuthUserName = ?"
@@ -134,15 +170,24 @@ class DBHelper(context: Context) :
         cursor.close()
 
         return result
-
-
     }
 
-    fun savePost(postId: Int, username: String, desc: String, imagePath: String?) : Long{
+    fun emailCheck(email: String): Boolean{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblUsers WHERE $colUserEmail = ?"
+        val cursor = db.rawQuery(query, arrayOf(email))
+        cursor.moveToFirst()
+        Log.d("TAG", "emailCheck: ${cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail))}")
+        val result = cursor.count > 0
+        cursor.close()
+        return result
+    }
 
-        return if(postId == 0){
+    fun savePost(postId: Int, username: String, desc: String, imagePath: String?): Long {
+
+        return if (postId == 0) {
             addPost(username, desc, imagePath)
-        } else{
+        } else {
             updatePost(postId, desc, imagePath).toLong()
         }
 
@@ -192,13 +237,14 @@ class DBHelper(context: Context) :
 
     }
 
-    fun getPostUser(username: String): MutableList<Post>{
-        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = 1 AND $colPostUsername = ? ORDER BY $colPostID DESC"
+    fun getPostUser(username: String): MutableList<Post> {
+        val query =
+            "SELECT * FROM $tblPost WHERE $colPostApproval = 1 AND $colPostUsername = ? ORDER BY $colPostID DESC"
         val args = arrayOf(username)
         return getPost(query, args)
     }
 
-    fun getPostSingle(postId: Int): MutableList<Post>{
+    fun getPostSingle(postId: Int): MutableList<Post> {
         val query = "SELECT * FROM $tblPost WHERE $colPostID = ?"
         val args = arrayOf(postId.toString())
         return getPost(query, args)
@@ -208,10 +254,18 @@ class DBHelper(context: Context) :
         val db = this.writableDatabase
         val where = "$colPostID = ?"
         val args = arrayOf(postId.toString())
+        this.deleteComments(postId)
         return db.delete(tblPost, where, args)
     }
 
-    private fun getPost(query: String, args: Array<String>?): MutableList<Post>{
+    private fun deleteComments(postId: Int) {
+        val db = this.writableDatabase
+        val where = "$colCommentPostId = ?"
+        val args = arrayOf(postId.toString())
+        db.delete(tblComment, where, args)
+    }
+
+    private fun getPost(query: String, args: Array<String>?): MutableList<Post> {
         var postList = mutableListOf<Post>()
         val db = this.readableDatabase
         val cursor = db.rawQuery(query, args)
@@ -228,4 +282,41 @@ class DBHelper(context: Context) :
 
         return postList
     }
+
+
+    fun addComment(author: String, content: String, postId: Int, parent: Int?) : Long{
+        val dateTime = LocalDateTime.now().toString()
+        val db = this.writableDatabase
+        val commentValues = ContentValues()
+
+        commentValues.put(colCommentAuthor, author)
+        commentValues.put(colCommentContent, content)
+        commentValues.put(colCommentPostId, postId)
+        commentValues.put(colCommentParentID, parent)
+        commentValues.put(colCommentTime, dateTime)
+
+        return db.insert(tblComment, null, commentValues)
+
+    }
+
+    fun getComment10(postId: Int): MutableList<Comment>{
+        var commentList = mutableListOf<Comment>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblComment WHERE $colCommentPostId = ? ORDER BY $colCommentID DESC LIMIT 10"
+        val cursor = db.rawQuery(query, arrayOf(postId.toString()))
+        if(cursor.moveToFirst()){
+            do {
+                val commentId = cursor.getInt(cursor.getColumnIndexOrThrow(colCommentID))
+                val author = cursor.getString(cursor.getColumnIndexOrThrow(colCommentAuthor))
+                val commentContent = cursor.getString(cursor.getColumnIndexOrThrow(colCommentContent))
+
+                val comment = Comment(commentId, author, commentContent)
+                commentList.add(comment)
+            } while (cursor.moveToNext())
+        }
+
+        return commentList
+
+    }
+
 }

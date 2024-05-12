@@ -13,11 +13,13 @@ import com.example.csy2091as2.Functions.Hashing
 import com.example.csy2091as2.Functions.Validations
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import kotlin.math.log
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
 
 
         val sharedPref = getSharedPreferences("userinfo", Context.MODE_PRIVATE)
@@ -27,8 +29,6 @@ class LoginActivity : AppCompatActivity() {
 
         if (sharedPref.contains("username") && sharedPref.contains("usertype")) {
             val activity = Intent(this, MainActivity::class.java)
-            activity.putExtra("usertype", sharedPref.getString("usertype", null))
-            activity.putExtra("username", sharedPref.getString("username", null))
             startActivity(activity)
         }
 
@@ -56,12 +56,36 @@ class LoginActivity : AppCompatActivity() {
             validation.emptyCheck(layUserName, edtUserName)
             validation.emptyCheck(layPassword, edtPassword)
 
-            val username = edtUserName.text.toString()
+//            determining username if user enters an email
+
+            var username = edtUserName.text.toString()
+            try {
+//                Log.d("TAG", "onCreate: inside try")
+                if(validation.validateEmail(edtUserName, layUserName)){
+//                    Log.d("TAG", "onCreate: email is correct")
+                    if(db.fetchUsername(username) != null){
+                        username = db.fetchUsername(username)!!
+//                        Log.d("TAG", "onCreate: username fetched")
+                    } else{
+                        Toast.makeText(this, "invalid Email", Toast.LENGTH_SHORT).show()
+//                        Log.d("TAG", "onCreate: invalid email")
+                    }
+                } else{
+//                    Log.d("TAG", "onCreate: email validationfailsed")
+                    Toast.makeText(this, "Invalid username or Email", Toast.LENGTH_SHORT).show()
+                }
+            } catch (_: Exception){
+                layUserName.error= null
+            }
+
+
             val userType =
                 db.authenticate(username, Hashing.doHashing(edtPassword.text.toString(), username))
 
 
+
             if (userType == "student" || userType == "admin") {
+//                Log.d("TAG", "onCreate: Authentication Successful")
                 //making a file with username and access level for global access.
                 val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE)
                 val editor = userInfo.edit()
@@ -71,6 +95,7 @@ class LoginActivity : AppCompatActivity() {
 
                 edtUserName.setText("")
                 edtPassword.setText("")
+                layUserName.error= null
 
                 val activity = Intent(this, MainActivity::class.java)
                 if (chkSaveUser.isChecked) {
@@ -83,8 +108,8 @@ class LoginActivity : AppCompatActivity() {
                 startActivity(activity)
             } else {
                 layPassword.error = " "
-                layUserName.error = "  "
-                Toast.makeText(this, "Invalid Username or Password", Toast.LENGTH_SHORT).show()
+                layUserName.error = " "
+                Toast.makeText(this, "Invalid Username/email or Password", Toast.LENGTH_SHORT).show()
             }
         }
 

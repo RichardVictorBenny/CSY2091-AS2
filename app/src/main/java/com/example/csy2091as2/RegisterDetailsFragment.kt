@@ -1,6 +1,7 @@
 package com.example.csy2091as2
 
 import android.app.DatePickerDialog
+import android.database.CursorIndexOutOfBoundsException
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -32,6 +33,7 @@ class RegisterDetailsFragment : Fragment() {
 
     private val functions = Functions()
     private val validations = Validations()
+    private lateinit var db: DBHelper
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -39,6 +41,9 @@ class RegisterDetailsFragment : Fragment() {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_register_details, container, false)
         val userData = arguments
+
+
+        db = DBHelper(requireContext())
 
 
         //textfields and layouts
@@ -106,7 +111,15 @@ class RegisterDetailsFragment : Fragment() {
             if(edtEmail.text.toString().isNotEmpty()){
                 try {
                     validations.validateEmail(edtEmail, layEmail)
-                } catch (exception: Exception){
+                    if(db.emailCheck(edtEmail.text.toString())){
+                        layEmail.error = "Email already in use"
+                    } else{
+                        layEmail.error = null
+                    }
+                } catch(_: CursorIndexOutOfBoundsException){
+
+                }
+                catch (exception: Exception){
                     layEmail.error = "Invalid Email"
                 }
 

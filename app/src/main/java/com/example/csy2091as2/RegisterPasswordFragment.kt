@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
+import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Hashing
 import com.example.csy2091as2.Functions.Validations
 import com.google.android.material.textfield.TextInputEditText
@@ -31,7 +32,6 @@ class RegisterPasswordFragment : Fragment() {
         val validation = Validations()
         val db = DBHelper(requireContext())
 
-//        Hashing.doHashing("passowrd",
         val btnRegisterBack: Button = view.findViewById(R.id.btnRegisterBack)
         val btnRegisterAccount: Button = view.findViewById(R.id.btnRegisterAccount)
         val edtUsername: TextInputEditText = view.findViewById(R.id.inpedtUsername)
@@ -96,7 +96,13 @@ class RegisterPasswordFragment : Fragment() {
                 )
                 if (result[0] > 0) {
                     Toast.makeText(requireContext(), "User Added", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(requireContext(), LoginActivity::class.java))
+                    if(Functions.getUserinfo(requireContext())["usertype"] == "admin"){
+                        activity?.finish()
+                    } else if(Functions.getUserinfo(requireContext())["usertype"] == "student"){
+
+                        startActivity(Intent(requireContext(), LoginActivity::class.java))
+                    }
+
                 } else if (result[1] > 0) {
                     Toast.makeText(requireContext(), "User Authenticated", Toast.LENGTH_SHORT)
                         .show()

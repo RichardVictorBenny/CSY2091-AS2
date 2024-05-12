@@ -47,16 +47,23 @@ class Validations {
         }
     }
 
-    fun validateEmail(editText: TextInputEditText, layout: TextInputLayout){
+    fun validateEmail(editText: TextInputEditText, layout: TextInputLayout): Boolean {
         editText.doOnTextChanged { text, start, before, count ->
             val email: String = editText.text.toString()
-            layout.error = if(!Patterns.EMAIL_ADDRESS.matcher(text).matches()) "Invalid email" else null
+            layout.error =
+                if (!Patterns.EMAIL_ADDRESS.matcher(text).matches()) "Invalid email" else null
         }
 
         val emailDomains = arrayOf("middlemore.co.uk", "my.middlemore.co.uk")
         val inputDomain = editText.text.toString().split("@")[1]
 
-        layout.error = if(!emailDomains.contains(inputDomain)) "Invalid email" else null
+        if((!emailDomains.contains(inputDomain))){
+            layout.error = "invalid email"
+            Log.d("TAG", "validateEmail: $inputDomain")
+        } else{
+            layout.error = null
+        }
+        return emailDomains.contains(inputDomain)
     }
 
 

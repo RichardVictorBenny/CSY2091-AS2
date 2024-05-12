@@ -1,26 +1,58 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView   xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/post_drawer_bg"
-    android:paddingTop="16dp"
+    android:layout_height="match_parent">
 
-    android:orientation="vertical">
-
-    <TextView
-        android:id="@+id/dspComment"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/comments"
-        android:textAlignment="center"
-        android:textAllCaps="true"
-        android:textColor="?attr/colorPrimary"
-        android:textSize="30sp"
-        android:textStyle="bold" />
+        android:layout_height="match_parent"
+        android:background="@drawable/post_drawer_bg"
+        android:paddingTop="16dp"
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvComment"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:orientation="vertical">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/dspComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/comments"
+            android:textAlignment="center"
+            android:textAllCaps="true"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <EditText
+                android:id="@+id/edtComment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/edtComment"
+                android:alpha="0.7"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="65dp"/>
+
+            <ImageButton
+                android:id="@+id/btnPostComment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_send_24"
+                android:layout_marginEnd="16dp"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+
+
+
+    </LinearLayout>
+
+</ScrollView>
+

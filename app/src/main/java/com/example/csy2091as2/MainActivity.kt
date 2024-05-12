@@ -6,25 +6,17 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
-import com.example.csy2091as2.Admin.AdminOptionFragment
+import com.example.csy2091as2.Admin.AdminActivity
 import com.example.csy2091as2.databinding.ActivityMainBinding
-import java.util.jar.Attributes
 
 class MainActivity : AppCompatActivity() {
 
@@ -50,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         if(userType == "admin"){
             binding.imgAdminOptions.visibility = View.VISIBLE
             binding.imgAdminOptions.setOnClickListener{
-                replaceFragment(AdminOptionFragment())
+                startActivity(Intent(this, AdminActivity::class.java))
             }
         }
 

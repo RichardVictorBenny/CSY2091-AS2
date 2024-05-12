@@ -1,29 +1,38 @@
 package com.example.csy2091as2
 
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Post
 
 
 class HomeFragAdapter(
     private val dataset: MutableList<Post>,
-    private val context: Context,
-    private val userInfo: Map<String, String>
+    private val context: Context
 
 ): RecyclerView.Adapter<HomeFragAdapter.ViewHolder>() {
 
 
     private lateinit var db: DBHelper
+    private val userInfo = Functions.getUserinfo(context)
 
     companion object{
         val LIKE_ON = R.drawable.ic_thumb_up_on_24
@@ -126,7 +135,40 @@ class HomeFragAdapter(
 
 
     private fun openComments(postID: Int) {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.comment_drawer_layout)
 
+
+        //set the adapter for commments here
+        val rvComment = dialog.findViewById<RecyclerView>(R.id.rvComment)
+        rvComment.layoutManager = LinearLayoutManager(context)
+        var comments = db.getComment10(postID)
+        rvComment.adapter = CommentAdapter(comments, context)
+
+
+        //posting comments
+        val edtComment: EditText = dialog.findViewById(R.id.edtComment)
+        val btnPostComent: ImageButton = dialog.findViewById(R.id.btnPostComment)
+
+        btnPostComent.setOnClickListener{
+            if(edtComment.text.toString() != ""){
+                if(db.addComment(userInfo["username"]!!, edtComment.text.toString(), postID, null) != -1L){
+                    edtComment.setText("")
+                    rvComment.adapter = CommentAdapter(db.getComment10(postID), context)
+                }
+
+            }
+        }
+
+
+
+
+        dialog.show()
+        dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
     private fun setButton(imgView: ImageView, resource: Int){

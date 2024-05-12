@@ -49,11 +49,11 @@ class PostActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 //       setting a locaiton for images to be stored.
-        imgFolder = File(filesDir.absolutePath, "Pictures")
+        imgFolder = File(filesDir.absolutePath, "Pictures") //todo: make the folder if not exists
 //getting username
         val userInfo = Functions.getUserinfo(this)
-        username = userInfo.get("username")!!
-        val userType = userInfo.get("usertype")!!
+        username = userInfo["username"]!!
+        val userType = userInfo["usertype"]!!
 
 
 //        checking if the post is being edited or newly made
@@ -169,10 +169,7 @@ class PostActivity : AppCompatActivity() {
                 // TODO: go to account page or home page to see the post
             }
         }
-
-        imgFolder.setReadable(false)
-        imgFolder.setWritable(false)
-        imgFolder.setExecutable(false)
+        
     }
 
 
