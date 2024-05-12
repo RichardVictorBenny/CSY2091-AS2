@@ -44,6 +44,10 @@
     <string name="postInstructions">Tap on the image selector to pick an image.\nLongpress for moreOptions</string>
     <string name="comments">Comments</string>
     <string name="edtComment">Enter your comment</string>
+    <string name="delete">Delete</string>
+    <string name="delete_warning">Warning!! this action will completely remove the student and will lose all data about the student.</string>
+    <string name="search_box">search student</string>
+    <string name="delete_student">delete student</string>
 
 
 </resources>

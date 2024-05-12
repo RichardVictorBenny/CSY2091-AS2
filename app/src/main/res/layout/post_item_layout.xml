@@ -70,7 +70,7 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_marginRight="16dp"
-            android:padding="10dp"
+            android:padding="14dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/ic_add_comment_24"/>
 
