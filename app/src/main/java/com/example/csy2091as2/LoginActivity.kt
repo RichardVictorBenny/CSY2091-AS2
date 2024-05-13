@@ -60,18 +60,13 @@ class LoginActivity : AppCompatActivity() {
 
             var username = edtUserName.text.toString()
             try {
-//                Log.d("TAG", "onCreate: inside try")
                 if(validation.validateEmail(edtUserName, layUserName)){
-//                    Log.d("TAG", "onCreate: email is correct")
                     if(db.fetchUsername(username) != null){
                         username = db.fetchUsername(username)!!
-//                        Log.d("TAG", "onCreate: username fetched")
                     } else{
                         Toast.makeText(this, "invalid Email", Toast.LENGTH_SHORT).show()
-//                        Log.d("TAG", "onCreate: invalid email")
                     }
                 } else{
-//                    Log.d("TAG", "onCreate: email validationfailsed")
                     Toast.makeText(this, "Invalid username or Email", Toast.LENGTH_SHORT).show()
                 }
             } catch (_: Exception){

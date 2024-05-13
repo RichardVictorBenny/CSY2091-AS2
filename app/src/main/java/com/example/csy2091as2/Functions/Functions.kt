@@ -1,7 +1,9 @@
 package com.example.csy2091as2.Functions
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
+import com.example.csy2091as2.LoginActivity
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -35,6 +37,12 @@ class Functions {
                 "usertype" to userType
             )
             return map
+        }
+
+        fun logout(context: Context?) {
+            context?.getSharedPreferences("userinfo", Context.MODE_PRIVATE)?.edit()?.clear()?.commit()
+            context?.getSharedPreferences("currentUser", Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
+            context?.startActivity(Intent(context, LoginActivity::class.java))
         }
     }
 

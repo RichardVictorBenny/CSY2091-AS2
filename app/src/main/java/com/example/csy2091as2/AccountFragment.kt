@@ -59,10 +59,9 @@ class AccountFragment : Fragment() {
 //        sign out user and clear all data saved
         val btnLogout: Button = view.findViewById(R.id.btnLogout)
         btnLogout.setOnClickListener {
-            context?.getSharedPreferences("userinfo", Context.MODE_PRIVATE)?.edit()?.clear()?.commit()
-            context?.getSharedPreferences("currentUser", Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
-            startActivity(Intent(context, LoginActivity::class.java))
+            Functions.logout(context)
             activity?.finish()
+
         }
 
 

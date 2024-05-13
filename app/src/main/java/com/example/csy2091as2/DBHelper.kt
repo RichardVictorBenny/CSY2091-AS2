@@ -171,6 +171,23 @@ class DBHelper(context: Context) :
 
         return result
     }
+    fun updatePassword(username: String, newPassword: String): Boolean{
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(colAuthPassword, newPassword)
+
+        val result = db.update(tblAuthentication, contentValues, "$colAuthUserName = ?", arrayOf(username) )
+        return (result>0)
+    }
+    fun deleteUser(username: String): Boolean{
+        val db = this.writableDatabase
+        val result1 = db.delete(tblUsers, "$colAuthUserName = ?", arrayOf(username))
+        val result2 = db.delete(tblAuthentication,"$colAuthUserName = ?", arrayOf(username) )
+
+        return (result1+result2)>0
+    }
+
+
 
     fun emailCheck(email: String): Boolean{
         val db = this.readableDatabase
