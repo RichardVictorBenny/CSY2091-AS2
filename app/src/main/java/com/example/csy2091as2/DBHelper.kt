@@ -198,6 +198,7 @@ class DBHelper(context: Context) :
         val result = cursor.count > 0
         cursor.close()
         return result
+
     }
 
     fun savePost(postId: Int, username: String, desc: String, imagePath: String?): Long {
