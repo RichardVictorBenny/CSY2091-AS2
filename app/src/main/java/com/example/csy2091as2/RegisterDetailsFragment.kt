@@ -13,6 +13,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.TextView
+import android.widget.Toast
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Validations
 import com.google.android.material.textfield.TextInputEditText
@@ -37,16 +38,19 @@ class RegisterDetailsFragment : Fragment() {
     private lateinit var db: DBHelper
 
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         // Inflate the layout for this fragment
-        val view =  inflater.inflate(R.layout.fragment_register_details, container, false)
+        val view = inflater.inflate(R.layout.fragment_register_details, container, false)
         val data = arguments
 
-        if(data != null && data.getString("toUpdate") != ""){
+        if (data != null && data.getString("toUpdate") != "") {
 
             view.findViewById<TextView>(R.id.txtRegisterTagline).visibility = View.GONE
             view.findViewById<TextView>(R.id.txtRegisterWarning).visibility = View.GONE
+            view.findViewById<Button>(R.id.btnRegisterNext).setText("Save")
         }
 
 
@@ -60,9 +64,6 @@ class RegisterDetailsFragment : Fragment() {
         inptxtAutocomplete.setAdapter(adapter)
 
 
-
-
-
         //textfields and layouts
         val layFirstName: TextInputLayout = view.findViewById(R.id.inplayFirstName)
         val layMiddleName: TextInputLayout = view.findViewById(R.id.inplayMiddleName)
@@ -71,7 +72,6 @@ class RegisterDetailsFragment : Fragment() {
         val layDateOfBirth: TextInputLayout = view.findViewById(R.id.inplayDateOfBirth)
         val layUsername: TextInputLayout = view.findViewById(R.id.inplayUsername)
         val layUserType: TextInputLayout = view.findViewById(R.id.inplayUserType)
-
 
 
 //        val layUserName: TextInputLayout = findViewById(R.id.inplayUsername)
@@ -87,7 +87,7 @@ class RegisterDetailsFragment : Fragment() {
 
 
         //user type field visibility by usertype
-        if(Functions.getUserinfo(requireContext())["usertype"]!! == "admin"){
+        if (Functions.getUserinfo(requireContext())["usertype"]!! == "admin") {
             layUserType.visibility = View.VISIBLE
         }
 
@@ -95,7 +95,7 @@ class RegisterDetailsFragment : Fragment() {
 
         //populate data back into the textfields if went back }
 
-        if(data != null){
+        if (data != null) {
             edtFirstName.setText(data.getString("firstname"))
             edtMiddleName.setText(data.getString("middlename"))
             edtLastName.setText(data.getString("lastname"))
@@ -109,7 +109,7 @@ class RegisterDetailsFragment : Fragment() {
         layDateOfBirth.setEndIconOnClickListener {
             showDatePickerDialog(edtDateOfBirth, view)
         }
-        edtDateOfBirth.setOnClickListener{
+        edtDateOfBirth.setOnClickListener {
             showDatePickerDialog(edtDateOfBirth, view)
         }
 
@@ -126,7 +126,6 @@ class RegisterDetailsFragment : Fragment() {
             validations.emptyCheck(layLastName, edtLastName)
             validations.emptyCheck(layEmail, edtEmail)
             validations.emptyCheck(layDateOfBirth, edtDateOfBirth)
-
             validations.emptyCheck(layUsername, edtUsername)
 
             //character validation
@@ -138,43 +137,42 @@ class RegisterDetailsFragment : Fragment() {
             validations.checkForSpecialChars(layUsername, edtUsername.text.toString())
 
             //date validation
-            if(edtDateOfBirth.text.toString().isNotEmpty()){
+            if (edtDateOfBirth.text.toString().isNotEmpty()) {
                 //date variable defined here
-                val dateInput = LocalDate.parse(functions.formatDate(edtDateOfBirth.text.toString()))
+                val dateInput =
+                    LocalDate.parse(functions.formatDate(edtDateOfBirth.text.toString()))
                 validations.valiateDate(dateInput, layDateOfBirth)
 
             }
 
-            //email validation
-            if(edtEmail.text.toString().isNotEmpty()){
-                try {
-                    validations.validateEmail(edtEmail, layEmail)
-                    if(db.emailCheck(edtEmail.text.toString())){
-                        layEmail.error = "Email already in use"
-                    } else{
-                        layEmail.error = null
+            if (!(data != null && data.getString("toUpdate") != "")) {
+                //email validation
+                if (edtEmail.text.toString().isNotEmpty()) {
+                    try {
+                        validations.validateEmailOnChange(edtEmail, layEmail)
+                        if (db.emailCheck(edtEmail.text.toString())) {
+                            layEmail.error = "Email already in use"
+                        } else {
+                            layEmail.error = null
+                        }
+                    } catch (_: CursorIndexOutOfBoundsException) {
+                    } catch (exception: Exception) {
+                        layEmail.error = "Invalid Email"
                     }
-                } catch(_: CursorIndexOutOfBoundsException){
 
                 }
-                catch (exception: Exception){
-                    layEmail.error = "Invalid Email"
+                if (layUsername.error == null) {
+// username validation
+                    layUsername.error =
+                        if (edtUsername.text.toString() == "" && db.userCheck(edtUsername.text.toString())) "Username taken" else null
                 }
+
 
             }
 
-            // username validation
-            layUsername.error =
-                if (db.userCheck(edtUsername.text.toString())) "Username taken" else null
 
-            
-            // checking if the data is being updated or not
-            if(data != null && data.getString("toUpdate") != ""){
-                Log.d("TAG", "onCreateView: ${data.getString("toUpdate")}")
-            } else
-                //final checks
-            if(layUsername.error == null && layFirstName.error==null && layLastName.error==null && layEmail.error==null && layDateOfBirth.error==null){
-                val fragment = RegisterPasswordFragment()
+            //final checks
+            if (layUsername.error == null && layFirstName.error == null && layLastName.error == null && layEmail.error == null && layDateOfBirth.error == null) {
                 val bundle = Bundle()
                 bundle.putString("firstname", edtFirstName.text.toString())
                 bundle.putString("middlename", edtMiddleName.text.toString())
@@ -182,41 +180,65 @@ class RegisterDetailsFragment : Fragment() {
                 bundle.putString("email", edtEmail.text.toString())
                 bundle.putString("dateofbirth", edtDateOfBirth.text.toString())
                 bundle.putString("username", edtUsername.text.toString())
-                bundle.putString("usertype", if(inptxtAutocomplete.text.isEmpty()) "student" else {inptxtAutocomplete.text.toString()})
+                bundle.putString(
+                    "usertype",
+                    if (inptxtAutocomplete.text.isEmpty()) "student" else {
+                        inptxtAutocomplete.text.toString()
+                    }
+                )
+                // checking if the data is being updated or not
+                if (data != null && data.getString("toUpdate") != "") {
+                    if (db.updateUser(data.getString("toUpdate")!!, bundle)) {
+                        Toast.makeText(requireContext(), "User Detials updated", Toast.LENGTH_SHORT)
+                            .show()
+                        activity?.finish()
+                    } else {
+                        Toast.makeText(requireContext(), "Action unsuccessful", Toast.LENGTH_SHORT)
+                            .show()
+                    }
 
-                fragment.arguments = bundle
-                val transaction = activity?.supportFragmentManager?.beginTransaction()
-                transaction?.replace(R.id.registerFragmentContainer, fragment)?.commit()
+
+                    //updating details of a user
+                    Log.d("TAG", "onCreateView: ${data.getString("toUpdate")}")
+                } else {
+
+                    //adding a new user
+                    val fragment = RegisterPasswordFragment()
+
+                    fragment.arguments = bundle
+                    val transaction = activity?.supportFragmentManager?.beginTransaction()
+                    transaction?.replace(R.id.registerFragmentContainer, fragment)?.commit()
+                }
             }
         }
 
         return view
     }
 
-        private fun showDatePickerDialog(edtDatePicker: TextInputEditText, view: View){
+    private fun showDatePickerDialog(edtDatePicker: TextInputEditText, view: View) {
 
-            val calendar = Calendar.getInstance()
-            val year = calendar.get(Calendar.YEAR)
-            val month = calendar.get(Calendar.MONTH)
-            val day = calendar.get(Calendar.DAY_OF_MONTH)
-            var dateOfBirth:String = ""
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+        var dateOfBirth: String = ""
 
-            val datePickerDialog = DatePickerDialog(view.context, DatePickerDialog.OnDateSetListener { view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
+        val datePickerDialog = DatePickerDialog(
+            view.context,
+            DatePickerDialog.OnDateSetListener { view: DatePicker, year: Int, monthOfYear: Int, dayOfMonth: Int ->
                 dateOfBirth = "$dayOfMonth/${monthOfYear + 1}/$year"
                 edtDatePicker.setText(dateOfBirth)
 
-            }, year, month, day)
+            },
+            year,
+            month,
+            day
+        )
 
-            datePickerDialog.show()
-        }
+        datePickerDialog.show()
+    }
 
     // TODO: move validations to a different Class.
-
-
-
-
-
-
 
 
 }

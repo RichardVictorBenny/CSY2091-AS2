@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.os.Bundle
 import android.util.Log
 import com.example.csy2091as2.Functions.Comment
 import com.example.csy2091as2.Functions.Functions
@@ -126,6 +127,45 @@ class DBHelper(context: Context) :
 //        return arrayOf(statusCred)
     }
 
+    fun updateUser(oldUsername: String,
+         bundle: Bundle
+    ): Boolean {
+
+        val newUsername = bundle.getString("username")
+        val firstName = bundle.getString("firstname")
+        val middleName = bundle.getString("middlename")
+        val lastName = bundle.getString("lastname")
+        val email = bundle.getString("email")
+        val dob = bundle.getString("dateofbirth")
+        val usertype = bundle.getString("usertype")
+
+        // gets the current date
+        val functions = Functions()
+        val currentDate = functions.getCurrentDate()
+
+
+        val db = this.writableDatabase
+        val userValues = ContentValues()
+        userValues.put(colUserFirstName, firstName)
+        userValues.put(colUserMiddleName, middleName)
+        userValues.put(colUserLastName, lastName)
+        userValues.put(colUserEmail, email)
+        userValues.put(colUserDOB, dob)
+        userValues.put(colUserDateUpdated, currentDate)
+        userValues.put(colAuthUserName, newUsername)
+
+        val userCred = ContentValues()
+        userCred.put(colAuthUserName, newUsername)
+        userCred.put(colAuthType, usertype)
+
+        val where = "$colAuthUserName = ?"
+        val whereArgs = arrayOf(oldUsername)
+
+        val statusUser = db.update(tblUsers, userValues, where, whereArgs) >0
+        val statusCred = db.update(tblAuthentication, userCred, where, whereArgs) >0
+        return statusUser && statusCred
+    }
+
     fun authenticate(username: String, password: String): String? {
 
         val db: SQLiteDatabase = this.readableDatabase
@@ -201,7 +241,6 @@ class DBHelper(context: Context) :
         val query = "SELECT * FROM $tblUsers WHERE $colUserEmail = ?"
         val cursor = db.rawQuery(query, arrayOf(email))
         cursor.moveToFirst()
-        Log.d("TAG", "emailCheck: ${cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail))}")
         val result = cursor.count > 0
         cursor.close()
         return result
