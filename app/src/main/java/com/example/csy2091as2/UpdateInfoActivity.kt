@@ -40,7 +40,7 @@ class UpdateInfoActivity : AppCompatActivity() {
         binding.btnInfoSearch.setOnClickListener{
             transaction.remove(fragment).commitNow()
             if(binding.edtUpdateInfo.text.isEmpty()){
-                Toast.makeText(this, "Username reqired", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Username required", Toast.LENGTH_SHORT).show()
             } else{
                 val userSearch = binding.edtUpdateInfo.text.toString()
                 try {

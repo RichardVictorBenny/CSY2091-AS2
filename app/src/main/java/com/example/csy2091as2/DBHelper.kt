@@ -54,6 +54,8 @@ class DBHelper(context: Context) :
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+
+        // TODO: insert an admin user by default and a student
         val qryAuthentication =
             "CREATE TABLE " + tblAuthentication + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + colAuthUserName + " TEXT, " + colAuthPassword + " TEXT, $colAuthType TEXT DEFAULT student)"
         val qryUser =
