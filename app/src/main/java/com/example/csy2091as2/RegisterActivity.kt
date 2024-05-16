@@ -9,10 +9,6 @@ class RegisterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_register)
 
-        val db = DBHelper(this)
-        val functions = Functions()
-
-
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.registerFragmentContainer, RegisterDetailsFragment()).commit()
 

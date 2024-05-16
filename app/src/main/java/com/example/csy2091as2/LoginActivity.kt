@@ -30,6 +30,12 @@ class LoginActivity : AppCompatActivity() {
         if (sharedPref.contains("username") && sharedPref.contains("usertype")) {
             val activity = Intent(this, MainActivity::class.java)
             startActivity(activity)
+        } else{
+            //clearing currentUser
+            val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE).edit()
+            userInfo.clear()
+            userInfo.apply()
+
         }
 
         val db = DBHelper(this)

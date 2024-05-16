@@ -29,6 +29,7 @@ import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Hashing
 import com.example.csy2091as2.R
 import com.example.csy2091as2.RegisterActivity
+import com.example.csy2091as2.UpdateInfoActivity
 import com.example.csy2091as2.databinding.ActivityAdminBinding
 import com.example.csy2091as2.databinding.ActivityPostBinding
 
@@ -54,6 +55,11 @@ class AdminActivity : AppCompatActivity() {
 
         binding.layUpdatePassword.setOnClickListener {
             openUpdatePasswordDrawer()
+        }
+
+        binding.layUpdateInfo.setOnClickListener{
+            val activity = Intent(this, UpdateInfoActivity::class.java)
+            startActivity(activity)
         }
     }
 
@@ -82,7 +88,7 @@ class AdminActivity : AppCompatActivity() {
                     Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
                 }
             }
-            if (student != userInfo.get("username")) {
+            if (student != userInfo.get("username")) { //check to prevent self deletion
 
                 try {
                     val studentInfo = db.fetchUser(student)
@@ -101,9 +107,11 @@ class AdminActivity : AppCompatActivity() {
 
         btnDelete.setOnClickListener {
             try {
-                if (db.deleteUser(student)) {
-                    llDetails.visibility = View.GONE
-                    Toast.makeText(this, "$student is deleted", Toast.LENGTH_SHORT).show()
+                if (llDetails.visibility == View.VISIBLE) {
+                    if (db.deleteUser(student)) {
+                        llDetails.visibility = View.GONE
+                        Toast.makeText(this, "$student is deleted", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
             }

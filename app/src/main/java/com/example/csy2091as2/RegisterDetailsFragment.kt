@@ -4,14 +4,15 @@ import android.app.DatePickerDialog
 import android.database.CursorIndexOutOfBoundsException
 import android.os.Bundle
 import android.util.Log
-import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.DatePicker
-import androidx.core.widget.doOnTextChanged
+import android.widget.TextView
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Validations
 import com.google.android.material.textfield.TextInputEditText
@@ -40,10 +41,26 @@ class RegisterDetailsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.fragment_register_details, container, false)
-        val userData = arguments
+        val data = arguments
+
+        if(data != null && data.getString("toUpdate") != ""){
+
+            view.findViewById<TextView>(R.id.txtRegisterTagline).visibility = View.GONE
+            view.findViewById<TextView>(R.id.txtRegisterWarning).visibility = View.GONE
+        }
+
 
 
         db = DBHelper(requireContext())
+
+        //populating the drop down menu
+        val options = arrayOf("student", "admin")
+        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, options)
+        val inptxtAutocomplete = view.findViewById<AutoCompleteTextView>(R.id.inpedtUserType)
+        inptxtAutocomplete.setAdapter(adapter)
+
+
+
 
 
         //textfields and layouts
@@ -52,8 +69,14 @@ class RegisterDetailsFragment : Fragment() {
         val layLastName: TextInputLayout = view.findViewById(R.id.inplayLastName)
         val layEmail: TextInputLayout = view.findViewById(R.id.inplayEmail)
         val layDateOfBirth: TextInputLayout = view.findViewById(R.id.inplayDateOfBirth)
+        val layUsername: TextInputLayout = view.findViewById(R.id.inplayUsername)
+        val layUserType: TextInputLayout = view.findViewById(R.id.inplayUserType)
+
+
+
 //        val layUserName: TextInputLayout = findViewById(R.id.inplayUsername)
 
+        val edtUsername: TextInputEditText = view.findViewById(R.id.inpedtUsername)
         val edtFirstName: TextInputEditText = view.findViewById(R.id.inpedtFirstName)
         val edtMiddleName: TextInputEditText = view.findViewById(R.id.inpedtMiddleName)
         val edtLastName: TextInputEditText = view.findViewById(R.id.inpedtLastName)
@@ -63,14 +86,24 @@ class RegisterDetailsFragment : Fragment() {
 //        val edtPassword: TextInputEditText = findViewById(R.id.inpedtPassword)
 
 
+        //user type field visibility by usertype
+        if(Functions.getUserinfo(requireContext())["usertype"]!! == "admin"){
+            layUserType.visibility = View.VISIBLE
+        }
+
+//        Log.d("TAG", "onCreateView: only works if user is admin: ${Functions.getUserinfo(requireContext())["usertype"]!!}")
+
         //populate data back into the textfields if went back }
 
-        if(userData != null){
-            edtFirstName.setText(userData.getString("firstname"))
-            edtMiddleName.setText(userData.getString("middlename"))
-            edtLastName.setText(userData.getString("lastname"))
-            edtEmail.setText(userData.getString("email"))
-            edtDateOfBirth.setText(userData.getString("dateofbirth"))
+        if(data != null){
+            edtFirstName.setText(data.getString("firstname"))
+            edtMiddleName.setText(data.getString("middlename"))
+            edtLastName.setText(data.getString("lastname"))
+            edtEmail.setText(data.getString("email"))
+            edtDateOfBirth.setText(data.getString("dateofbirth"))
+            edtUsername.setText(data.getString("username"))
+            inptxtAutocomplete.setText(data.getString("usertype"))
+
         }
 
         layDateOfBirth.setEndIconOnClickListener {
@@ -94,14 +127,19 @@ class RegisterDetailsFragment : Fragment() {
             validations.emptyCheck(layEmail, edtEmail)
             validations.emptyCheck(layDateOfBirth, edtDateOfBirth)
 
+            validations.emptyCheck(layUsername, edtUsername)
+
             //character validation
             validations.checkForSpecialChars(layFirstName, edtFirstName.text.toString())
             validations.checkForSpecialChars(layLastName, edtLastName.text.toString())
             validations.checkForSpecialChars(layMiddleName, edtMiddleName.text.toString())
+            validations.setErrorOnChange(layUsername, edtUsername)
 
+            validations.checkForSpecialChars(layUsername, edtUsername.text.toString())
 
             //date validation
             if(edtDateOfBirth.text.toString().isNotEmpty()){
+                //date variable defined here
                 val dateInput = LocalDate.parse(functions.formatDate(edtDateOfBirth.text.toString()))
                 validations.valiateDate(dateInput, layDateOfBirth)
 
@@ -124,10 +162,18 @@ class RegisterDetailsFragment : Fragment() {
                 }
 
             }
+
+            // username validation
+            layUsername.error =
+                if (db.userCheck(edtUsername.text.toString())) "Username taken" else null
+
             
-            
-            //final checks
-            if(layFirstName.error==null && layLastName.error==null && layEmail.error==null && layDateOfBirth.error==null){
+            // checking if the data is being updated or not
+            if(data != null && data.getString("toUpdate") != ""){
+                Log.d("TAG", "onCreateView: ${data.getString("toUpdate")}")
+            } else
+                //final checks
+            if(layUsername.error == null && layFirstName.error==null && layLastName.error==null && layEmail.error==null && layDateOfBirth.error==null){
                 val fragment = RegisterPasswordFragment()
                 val bundle = Bundle()
                 bundle.putString("firstname", edtFirstName.text.toString())
@@ -135,6 +181,9 @@ class RegisterDetailsFragment : Fragment() {
                 bundle.putString("lastname", edtLastName.text.toString())
                 bundle.putString("email", edtEmail.text.toString())
                 bundle.putString("dateofbirth", edtDateOfBirth.text.toString())
+                bundle.putString("username", edtUsername.text.toString())
+                bundle.putString("usertype", if(inptxtAutocomplete.text.isEmpty()) "student" else {inptxtAutocomplete.text.toString()})
+
                 fragment.arguments = bundle
                 val transaction = activity?.supportFragmentManager?.beginTransaction()
                 transaction?.replace(R.id.registerFragmentContainer, fragment)?.commit()

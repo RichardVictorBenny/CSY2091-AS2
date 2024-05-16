@@ -34,17 +34,17 @@ class RegisterPasswordFragment : Fragment() {
 
         val btnRegisterBack: Button = view.findViewById(R.id.btnRegisterBack)
         val btnRegisterAccount: Button = view.findViewById(R.id.btnRegisterAccount)
-        val edtUsername: TextInputEditText = view.findViewById(R.id.inpedtUsername)
+
         val edtPassword: TextInputEditText = view.findViewById(R.id.inpedtPassword)
         val edtConfirmPassword: TextInputEditText = view.findViewById(R.id.inpedtConfirmPassword)
 
-        val layUsername: TextInputLayout = view.findViewById(R.id.inplayUsername)
+
         val layPassword: TextInputLayout = view.findViewById(R.id.inplayPassword)
         val layConfirmPassword: TextInputLayout = view.findViewById(R.id.inplayConfirmPassword)
 
 
         //input validaitons
-        validation.setErrorOnChange(layUsername, edtUsername)
+
 
         btnRegisterBack.setOnClickListener {
             val fragment = RegisterDetailsFragment()
@@ -56,13 +56,12 @@ class RegisterPasswordFragment : Fragment() {
 
         btnRegisterAccount.setOnClickListener {
 
-            validation.emptyCheck(layUsername, edtUsername)
+
             validation.emptyCheck(layPassword, edtPassword)
             validation.emptyCheck(layConfirmPassword, edtConfirmPassword)
-            validation.checkForSpecialChars(layUsername, edtUsername.text.toString())
 
-            layUsername.error =
-                if (db.userCheck(edtUsername.text.toString())) "Username taken" else null
+
+
 
 
             if (edtPassword.text.toString() != edtConfirmPassword.text.toString()) {
@@ -76,14 +75,18 @@ class RegisterPasswordFragment : Fragment() {
                 layConfirmPassword.error = null
             }
 
-            if (layUsername.error == null && layPassword.error == null && layConfirmPassword.error == null) {
-                val firstName = bundle?.getString("firstname")
-                val middleName = bundle?.getString("middlename")
-                val lastName = bundle?.getString("lastname")
-                val email = bundle?.getString("email")
-                val dateOfBirth = bundle?.getString("dateofbirth")
-                val userName = edtUsername.text.toString()
+            if (layPassword.error == null && layConfirmPassword.error == null) {
+                val firstName = bundle?.getString("firstname")!!
+                val middleName = bundle.getString("middlename")!!
+                val lastName = bundle.getString("lastname")!!
+                val email = bundle.getString("email")!!
+                val dateOfBirth = bundle.getString("dateofbirth")!!
+                val userName = bundle.getString("username")!!
                 val password = Hashing.doHashing(edtPassword.text.toString(), userName)
+                val newUserType = bundle.getString("usertype")
+
+                val currentUserType = if(Functions.getUserinfo(requireContext())["usertype"]?.isNotEmpty() == true) Functions.getUserinfo(requireContext())["usertype"] else "student"
+                Log.d("TAG", "onCreateView: newUserType: $newUserType")
                 // TODO: make account
                 val result: Array<Long> = db.addUser(
                     userName,
@@ -92,20 +95,21 @@ class RegisterPasswordFragment : Fragment() {
                     lastName,
                     email,
                     dateOfBirth,
-                    password
+                    password,
+                    newUserType
                 )
-                if (result[0] > 0) {
+                if (result[0] > 0 && result[1] > 0) {
+
                     Toast.makeText(requireContext(), "User Added", Toast.LENGTH_SHORT).show()
-                    if(Functions.getUserinfo(requireContext())["usertype"] == "admin"){
+                    if(currentUserType == "admin"){
                         activity?.finish()
-                    } else if(Functions.getUserinfo(requireContext())["usertype"] == "student"){
+                    } else if(currentUserType == "student"){
+                        activity?.finish()
 
                         startActivity(Intent(requireContext(), LoginActivity::class.java))
+                    } else{
+                        Log.d("TAG", "onCreateView: $currentUserType")
                     }
-
-                } else if (result[1] > 0) {
-                    Toast.makeText(requireContext(), "User Authenticated", Toast.LENGTH_SHORT)
-                        .show()
                 } else {
                     Toast.makeText(requireContext(), "Unsuccessful", Toast.LENGTH_SHORT).show()
                 }

@@ -46,11 +46,13 @@
     <string name="edtComment">Enter your comment</string>
     <string name="delete">Delete</string>
     <string name="delete_warning">Warning!! this action will completely remove the student and will lose all data about the student.</string>
-    <string name="search_box">search student</string>
+    <string name="search_box">Search User</string>
     <string name="delete_student">delete student</string>
     <string name="update">Update</string>
     <string name="generate">generate</string>
     <string name="update_password">update password</string>
+    <string name="update_user">username or email</string>
+    <string name="update_info">Update info</string>
 
 
 </resources>

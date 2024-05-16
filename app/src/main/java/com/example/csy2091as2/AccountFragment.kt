@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -62,6 +63,14 @@ class AccountFragment : Fragment() {
             Functions.logout(context)
             activity?.finish()
 
+        }
+
+        // setting edit info button
+        val btnEditInfo = view.findViewById<ImageView>(R.id.imgEditInfo)
+        btnEditInfo.setOnClickListener{
+            val activity = Intent(requireContext(), UpdateInfoActivity::class.java)
+            activity.putExtra("toUpdateUser", "y")//to know that the activity is invoked by edit account button.
+            startActivity(activity)
         }
 
 

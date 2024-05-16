@@ -27,7 +27,7 @@
                 android:layout_marginStart="10dp"/>
 
             <ImageView
-                android:id="@+id/imgHamburger"
+                android:id="@+id/imgEditInfo"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/ic_edit_32"

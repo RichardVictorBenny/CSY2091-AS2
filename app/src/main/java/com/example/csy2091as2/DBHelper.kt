@@ -87,12 +87,13 @@ class DBHelper(context: Context) :
 
     fun addUser(
         studentID: String,
-        firstName: String?,
-        middleName: String?,
-        lastName: String?,
-        email: String?,
-        dob: String?,
-        password: String
+        firstName: String,
+        middleName: String,
+        lastName: String,
+        email: String,
+        dob: String,
+        password: String,
+        usertype: String?
     ): Array<Long> {
 
         // gets the current date
@@ -114,6 +115,7 @@ class DBHelper(context: Context) :
         val userCred = ContentValues()
         userCred.put(colAuthUserName, studentID)
         userCred.put(colAuthPassword, password)
+        userCred.put(colAuthType, usertype)
 
 
         val statusUser = db.insert(tblUsers, null, userValues)
@@ -150,14 +152,17 @@ class DBHelper(context: Context) :
         val db = this.readableDatabase
         val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName = ?"
         val cursor = db.rawQuery(query, arrayOf(username))
+        val auth = db.rawQuery("SELECT * FROM $tblAuthentication WHERE $colAuthUserName = ?", arrayOf(username))
         cursor.moveToFirst()
+        auth.moveToFirst()
         return User(
             cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName)),
             cursor.getString(cursor.getColumnIndexOrThrow(colUserFirstName)),
             cursor.getString(cursor.getColumnIndexOrThrow(colUserMiddleName)),
             cursor.getString(cursor.getColumnIndexOrThrow(colUserLastName)),
             cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB))
+            cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB)),
+            auth.getString(auth.getColumnIndexOrThrow(colAuthType))
         )
     }
 

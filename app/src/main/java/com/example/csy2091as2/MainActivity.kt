@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.csy2091as2.Admin.AdminActivity
+import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -27,9 +28,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val sharedPreferences = getSharedPreferences("currentUser", Context.MODE_PRIVATE)
-        userType = sharedPreferences.getString("usertype", null).toString()
-        userName = sharedPreferences.getString("username", null).toString()
+        userType = Functions.getUserinfo(this)["usertype"].toString()
+        userName = Functions.getUserinfo(this)["username"].toString()
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
