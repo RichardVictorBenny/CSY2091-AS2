@@ -16,7 +16,7 @@ import java.time.LocalDateTime
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
-        const val DATABASE_VERSION = 17
+        const val DATABASE_VERSION = 19
 
         //        const val DATABASE_VERSION = 1
         const val DATABASE_NAME = "campusconnect"
@@ -45,6 +45,7 @@ class DBHelper(context: Context) :
         val colPostImage = "PostImage"
         val colPostApproval = "PostApproval"
         val colPostImageBlob = "PostImageBlob"
+        val colPostApprovalBy = "PostApprovalBy"
 
         val tblComment = "tblComments"
         val colCommentID = "CommentID"
@@ -75,12 +76,12 @@ class DBHelper(context: Context) :
             "CREATE TABLE " + tblUsers + "(" + colUserID + " INTEGER PRIMARY KEY AUTOINCREMENT,  " + colAuthUserName + " TEXT, " + colUserFirstName + " TEXT, " +
                     colUserMiddleName + " TEXT, " + colUserLastName + " TEXT, " + colUserDOB + " TEXT, " + colUserEmail + " TEXT, " + colUserDateCreated + " TEXT, " + colUserDateUpdated + " TEXT)"
         val qryPost =
-            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER,  $colPostImageBlob BLOB)"
+            "CREATE TABLE $tblPost ($colPostID INTEGER PRIMARY KEY AUTOINCREMENT, $colPostUsername TEXT , $colPostTime TEXT NOT NULL, $colPostUpdateTime TEXT NOT NULL, $colPostDesc TEXT, $colPostImage TEXT, $colPostApproval INTEGER,  $colPostImageBlob BLOB, $colPostApprovalBy INTEGER)"
 
         val qryComment =
             "CREATE TABLE $tblComment($colCommentID INTEGER PRIMARY KEY AUTOINCREMENT, $colCommentAuthor TEXT, $colCommentContent TEXT, $colCommentPostId INTEGER, $colCommentParentID INTEGER, $colCommentTime TEXT )"
         val qryLike =
-            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor TEXT, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT, $colLikeUpdateTime TEXT )"
+            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor TEXT, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
 
         if (db != null) {
             db.execSQL(qryUser)
@@ -92,12 +93,14 @@ class DBHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val qryPost =
-            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor Text, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
+        val qryPost = "ALTER TABLE $tblPost ADD COLUMN $colPostApprovalBy INTEGER\n"
+//            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor Text, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
 
         if (db != null) {
+//            db.execSQL("CREATE TABLE new_likes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT,$colLikePost INTEGER,$colLikeAuthor TEXT,$colLikeLiked INTEGER DEFAULT 0,$colLikeDisliked INTEGER DEFAULT 0,$colLikeAddTime TEXT)")
             db.execSQL("DROP TABLE $tblLikes")
-            db.execSQL(qryPost)
+            db.execSQL("DROP TABLE new_likes")
+            db.execSQL("CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor TEXT, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)")
 
         }
     }
@@ -411,7 +414,7 @@ class DBHelper(context: Context) :
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
         postValues.put(colPostImage, imagePath)
-        postValues.put(colPostApproval, 1)
+        postValues.put(colPostApproval, 0)
 
         return db.insert(tblPost, null, postValues)
 
@@ -427,13 +430,17 @@ class DBHelper(context: Context) :
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
         postValues.put(colPostImage, imagePath)
-        postValues.put(colPostApproval, 1)
+        postValues.put(colPostApproval, 0)
 
         val where = "$colPostID = ?"
         val args = arrayOf(postId.toString())
 
         return db.update(tblPost, postValues, where, args)
 
+
+    }
+
+    fun approvePost(postId: Int, superuser: Int){
 
     }
 

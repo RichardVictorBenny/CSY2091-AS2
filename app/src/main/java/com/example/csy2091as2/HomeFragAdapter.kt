@@ -35,6 +35,7 @@ class HomeFragAdapter(
     private lateinit var db: DBHelper
     private val userInfo = Functions.getUserinfo(context)
     private val username = userInfo["username"]!!
+    private var likeId : Int? = null
 
     companion object {
         val LIKE_ON = R.drawable.ic_thumb_up_on_24
@@ -69,14 +70,14 @@ class HomeFragAdapter(
 //        holder.btnLike.tag = LIKE_ON
 
         // just defaults to no likes, need to see if the user already liked and do appropriately, need to block user from liking and dislikeing at the same time
-        val likeId = db.getLikeId(username, postId)
+        likeId = db.getLikeId(username, postId)
 //        Log.d("TAG", "onBindViewHolder: ${likeId.toString()}")
 
         try {
             if (db.isLiked(likeId!!)) {
                 setButton(holder.btnLike, LIKE_ON)
                 setButton(holder.btnDislike, DISLIKE_OFF)
-            } else if (db.isDisliked(likeId)) {
+            } else if (db.isDisliked(likeId!!)) {
                 setButton(holder.btnDislike, DISLIKE_ON)
                 setButton(holder.btnLike, LIKE_OFF)
             }
@@ -125,6 +126,7 @@ class HomeFragAdapter(
                 setButton(holder.btnLike, LIKE_ON)
                 // add like to db and remove dislike if prev disliked  and todo refresh
                 db.addLike(username, postId)
+                likeId = db.getLikeId(username, postId)
                 setButton(holder.btnDislike, DISLIKE_OFF)
             }
         }
@@ -138,6 +140,7 @@ class HomeFragAdapter(
                 setButton(holder.btnDislike, DISLIKE_ON)
                 // add dislike to db and remove like if prev liked and todo: refresh
                 db.addDislike(username, postId)
+                likeId = db.getLikeId(username, postId)
                 setButton(holder.btnLike, LIKE_OFF)
 
             }
