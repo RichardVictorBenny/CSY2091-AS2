@@ -1,6 +1,7 @@
 package com.example.csy2091as2
 
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -72,7 +73,7 @@ class PostFragAdapter(
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         db = DBHelper(context)
         val postId = dataset[position].postID
         val imgPath = dataset[position].postImgPath
@@ -225,6 +226,26 @@ class PostFragAdapter(
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setContentView(R.layout.analytics_drawer_layout)
 
+        val txtLike = dialog.findViewById<TextView>(R.id.txtLikeCount)
+        val txtDislike = dialog.findViewById<TextView>(R.id.txtDislikeCount)
+        val txtLikeness = dialog.findViewById<TextView>(R.id.txtLikeness)
+        val btnRefresh = dialog.findViewById<ImageButton>(R.id.btnRefresh)
+
+        val analytics = getAnalyticValues(position)
+
+        txtLike.text = analytics["likes"]
+        txtDislike.text = analytics["dislikes"]
+        txtLikeness.text = analytics["ratio"]
+
+
+        btnRefresh.setOnClickListener{
+            val analytics = getAnalyticValues(position)
+
+            txtLike.text = analytics["likes"]
+            txtDislike.text = analytics["dislikes"]
+            txtLikeness.text = analytics["ratio"]
+        }
+
 
         dialog.show()
         dialog.window?.setLayout(
@@ -234,6 +255,18 @@ class PostFragAdapter(
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
         dialog.window?.setGravity(Gravity.BOTTOM)
+    }
+
+    private fun getAnalyticValues(position: Int): Map<String, String>{
+        val likes = db.getLikeCount(dataset[position].postID).toString()
+        val dislikes = db.getDislikeCount(dataset[position].postID).toString()
+        val ratio: Double = if (dislikes.toInt() != 0) {
+            likes.toDouble() / dislikes.toDouble()
+        } else {
+            likes.toDouble() // Handle division by zero scenario
+        }
+        val ratioString = String.format("%.2f", ratio)
+        return mapOf("likes" to likes, "dislikes" to dislikes, "ratio" to ratioString)
     }
 
 

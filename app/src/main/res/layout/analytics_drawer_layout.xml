@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/post_drawer_bg">
+    android:background="@drawable/post_drawer_bg"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/dspChoose"
@@ -16,26 +16,36 @@
         android:textColor="?attr/colorPrimary"
         android:textSize="30sp"
         android:textStyle="bold" />
-    
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/refresh_to_view_the_latest"
+        android:textColor="@color/red"
+        android:textSize="18sp"
+        android:textAlignment="center"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="16dp">
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/likes"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/txtLikeCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="99"
             android:layout_marginStart="16dp"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+            android:text="99"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
 
     </LinearLayout>
@@ -43,24 +53,68 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_margin="16dp">
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/dislike"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtDislikeCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="99"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="99"
+            android:text="@string/likness_of_the_post"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtLikeness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:textSize="25sp"
-            android:textStyle="bold"/>
+            android:text="99"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageButton
+            android:id="@+id/btnRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_refresh_32"
+            android:layout_centerInParent="true"
+            android:padding="16dp"
+            android:background="@drawable/circular_background"
+            android:backgroundTint="?attr/colorTertiary"
+            android:contentDescription="@string/refresh_data" />
+    </RelativeLayout>
+
+
 
 </LinearLayout>
