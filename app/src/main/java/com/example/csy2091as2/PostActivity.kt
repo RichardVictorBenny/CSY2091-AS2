@@ -157,9 +157,9 @@ class PostActivity : AppCompatActivity() {
                 }
 
                 if(db.savePost(POST_ID, username, desc, imagePath, userType) != -1L){
-                    Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Post sent for review", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "unsuccesfull", Toast.LENGTH_SHORT).show()
                 }
 
 

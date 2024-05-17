@@ -60,6 +60,9 @@
     <string name="posts_that_were_declined_or_removed">Posts that were \n declined or removed</string>
     <string name="admin_options">Admin Options</string>
     <string name="post_to_approve">POSTS TO APPROVE</string>
+    <string name="analytics">Analytics</string>
+    <string name="likes">LIKES:</string>
+    <string name="dislike">DISLIKE:</string>
 
 
 </resources>

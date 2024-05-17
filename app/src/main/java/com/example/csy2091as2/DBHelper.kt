@@ -198,15 +198,20 @@ class DBHelper(context: Context) :
         return db.delete(tblLikes, "$colLikeId = ?", arrayOf(likeId.toString())) > 0
     }
 
-    fun getLikes(postId: Int): Int {
-        val likes = 0
+    fun getLikeCount(postId: Int): Int {
+        var likes = 0
+        val db = readableDatabase
+        val query = "SELECT * FROM $tblLikes WHERE $colLikeLiked = 1 AND $colLikePost = ?"
+        likes = db.rawQuery(query, arrayOf(postId.toString())).count
         return likes
     }
 
-    fun getDislike(postId: Int): Int {
-        val dislikes = 0
-        Log.d("TAG", "getDislike: ")
-        return dislikes
+    fun getDislikeCount(postId: Int): Int {
+        var likes = 0
+        val db = readableDatabase
+        val query = "SELECT * FROM $tblLikes WHERE $colLikeDisliked = 1 AND $colLikePost = ?"
+        likes = db.rawQuery(query,  arrayOf(postId.toString())).count
+        return likes
     }
 
     fun isLiked(
@@ -578,9 +583,30 @@ class DBHelper(context: Context) :
     fun approvePost(postId: Int, superuser: String): Boolean{
         val db = writableDatabase
         val values = ContentValues()
-        values.put(colPostApproval, -1)
+        values.put(colPostApproval, 1)
         values.put(colPostApprovalBy, superuser)
         return db.update(tblPost, values, "$colPostID = ?", arrayOf(postId.toString())) > 0
+    }
+
+    fun getStudents(): MutableList<User> {
+        val users = mutableListOf<User>()
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'student')"
+        val cursor = db.rawQuery(query, null)
+        if(cursor.moveToFirst()){
+            do{val username = cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName))
+                val firstName =cursor.getString(cursor.getColumnIndexOrThrow(colUserFirstName))
+                val middleName =cursor.getString(cursor.getColumnIndexOrThrow(colUserMiddleName))
+                val lastName =cursor.getString(cursor.getColumnIndexOrThrow(colUserLastName))
+                val email =cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail))
+                val dob =cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB))
+                users.add(User(username, firstName, middleName, lastName, email, dob, "student"))
+            } while (cursor.moveToNext())
+
+
+        }
+
+        return users
     }
 
 }

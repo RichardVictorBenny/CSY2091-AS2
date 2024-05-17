@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Post
+import java.util.Timer
+import java.util.TimerTask
 
 
 class PostFragAdapter(
@@ -38,6 +40,7 @@ class PostFragAdapter(
     private val username = userInfo["username"]!!
     private val usertype = userInfo["usertype"]!!
     private var likeId : Int? = null
+    private val timer = Timer()
 
     companion object {
         val LIKE_ON = R.drawable.ic_thumb_up_on_24
@@ -58,21 +61,21 @@ class PostFragAdapter(
         val rlAdminOption: RelativeLayout = view.findViewById(R.id.rlAdminOption)
         val btnApprove: Button = view.findViewById(R.id.btnApprove)
         val btnDecline: Button = view.findViewById(R.id.btnDecline)
+        val txtLikeCount: TextView = view.findViewById(R.id.txtLikeCount)
+        val txtDislikeCount: TextView = view.findViewById(R.id.txtDislikeCount)
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostFragAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.post_item_layout, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: PostFragAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         db = DBHelper(context)
         val postId = dataset[position].postID
         val imgPath = dataset[position].postImgPath
-//        holder.btnLike.setImageResource(LIKE_ON)
-//        holder.btnLike.tag = LIKE_ON
 
         // just defaults to no likes, need to see if the user already liked and do appropriately, need to block user from liking and dislikeing at the same time
         likeId = db.getLikeId(username, postId)
@@ -95,14 +98,35 @@ class PostFragAdapter(
 
 
 
+
+
+
 //        edit button visible only to authors of posts
-        if (dataset[position].username == userInfo.get("username")) {
+        if (dataset[position].username == username || usertype == "admin") {
             holder.btnMoreOption.visibility = View.VISIBLE
+            holder.txtLikeCount.visibility = View.VISIBLE
+            holder.txtDislikeCount.visibility = View.VISIBLE
+//getting likes and dislikes
+            timer.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    val likes = db.getLikeCount(dataset[position].postID).toString()
+                    val dislikes = db.getDislikeCount(dataset[position].postID).toString()
+                    holder.txtLikeCount.post {
+                        holder.txtLikeCount.text = likes
+                    }
+                    holder.txtDislikeCount.post {
+                        holder.txtDislikeCount.text = dislikes
+                    }
+                }
+            }, 0, 600)
         }
 
         //related to content moderation
-        if(dataset[position].approval == 0){
+        if(dataset[position].approval == 0 || dataset[position].approval == -1){
             holder.rlAdminOption.visibility = View.VISIBLE
+            if(dataset[position].approval == -1){
+                holder.btnDecline.visibility = View.GONE
+            }
         }
 
         holder.btnDecline.setOnClickListener{
@@ -175,14 +199,18 @@ class PostFragAdapter(
         holder.btnMoreOption.setOnClickListener {
             val popUp = PopupMenu(context, it)
 
-            popUp.menu.add("Edit")
-            popUp.menu.add("Delete")
+            if(username == dataset[position].username){
+                popUp.menu.add("Edit")
+                popUp.menu.add("Delete")
+            }
+            popUp.menu.add("Analytics")
             popUp.show()
 
             popUp.setOnMenuItemClickListener {
                 when (it.title) {
                     "Delete" -> delete(position)
                     "Edit" -> edit(position)
+                    "Analytics" -> openAnalytics(position)
                 }
                 true
             }
@@ -190,6 +218,22 @@ class PostFragAdapter(
         }
 
 
+    }
+
+    private fun openAnalytics(position: Int) {
+        val dialog = Dialog(context)
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        dialog.setContentView(R.layout.analytics_drawer_layout)
+
+
+        dialog.show()
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
 

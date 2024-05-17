@@ -1,47 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginTop="16dp"
     android:layout_marginStart="16dp"
+    android:layout_marginTop="16dp"
     android:layout_marginEnd="16dp"
-    android:background="@drawable/dashboard_box_bg">
-    <!-- Student Name -->
-    <TextView
-        android:id="@+id/txtStudentName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Student Name"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+    android:background="@drawable/dashboard_box_bg"
+    android:backgroundTint="?attr/colorTertiary"
+    android:orientation="horizontal"
+    android:padding="16dp">
 
-    <!-- Student ID -->
-    <TextView
-        android:id="@+id/txtStudentUsername" android:layout_marginEnd=" "
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Student ID"
-        android:textSize="14sp"
-        android:layout_marginBottom="4dp"/>
+        android:orientation="vertical">
 
-    <!-- Department -->
-    <TextView
-        android:id="@+id/textViewDepartment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Department"
-        android:textSize="14sp"/>
+        <TextView
+            android:id="@+id/txtStudentName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Student Name"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <!-- Grade -->
-    <TextView
-        android:id="@+id/textViewGrade"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Grade: 90%"
-        android:textSize="14sp"
-        android:textColor="@color/colorAccent"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+        <TextView
+            android:id="@+id/txtStudentUsername"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:text="Student ID"
+            android:textSize="14sp" />
+
+
+        <TextView
+            android:id="@+id/textViewDepartment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Department"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageViewStudent"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:background="@drawable/circular_background"
+        android:scaleType="centerCrop"
+        android:src="@drawable/placeholder"
+        android:visibility="gone" />
+
+
+</RelativeLayout>
+

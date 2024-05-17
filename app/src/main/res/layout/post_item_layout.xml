@@ -19,15 +19,33 @@
             android:layout_marginBottom="6dp"
             android:padding="2dp"
             android:src="@drawable/ic_thumb_up_off_alt_24" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtLikeCount"
+            android:text="99"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:layout_toEndOf="@id/imgPostLike"/>
         <ImageView
             android:id="@+id/imgPostDislike"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:layout_toEndOf="@+id/imgPostLike"
+            android:layout_toEndOf="@+id/txtLikeCount"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
             android:padding="2dp"
             android:src="@drawable/ic_thumb_down_off_alt_24"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtDislikeCount"
+            android:text="99"
+            android:textSize="20sp"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:layout_toEndOf="@id/imgPostDislike"/>
 
         <TextView
             android:id="@+id/txtPostUsername"
@@ -84,6 +102,9 @@
 
 
     </LinearLayout>
+
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"

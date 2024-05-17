@@ -74,7 +74,7 @@ class AdminActivity : AppCompatActivity() {
 
 
 
-        //time set for the posts to update every minute no need to destroy
+        //time set for the posts to update every 1/60 of a second no need to destroy
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 val postsToApprove = db.getPostsToApproveCount()
@@ -84,7 +84,7 @@ class AdminActivity : AppCompatActivity() {
                     binding.txtDeclinedCount.text = postsDeclined
                 }
             }
-        }, 0, 60000)
+        }, 0, 600)
     }
 
     override fun onDestroy() {
