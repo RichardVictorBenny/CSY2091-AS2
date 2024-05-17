@@ -54,6 +54,12 @@
     <string name="update_user">username or email</string>
     <string name="update_info">Update info</string>
     <string name="clear_page">" clear page "</string>
+    <string name="new_posts">New Posts</string>
+    <string name="posts_awaiting_approval">Posts awaiting approval\n</string>
+    <string name="declined_posts">Declined Posts</string>
+    <string name="posts_that_were_declined_or_removed">Posts that were \n declined or removed</string>
+    <string name="admin_options">Admin Options</string>
+    <string name="post_to_approve">POSTS TO APPROVE</string>
 
 
 </resources>

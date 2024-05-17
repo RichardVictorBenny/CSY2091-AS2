@@ -7,16 +7,17 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
+import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,16 +26,17 @@ import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Post
 
 
-class HomeFragAdapter(
+class PostFragAdapter(
     private val dataset: MutableList<Post>,
     private val context: Context
 
-) : RecyclerView.Adapter<HomeFragAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<PostFragAdapter.ViewHolder>() {
 
 
     private lateinit var db: DBHelper
     private val userInfo = Functions.getUserinfo(context)
     private val username = userInfo["username"]!!
+    private val usertype = userInfo["usertype"]!!
     private var likeId : Int? = null
 
     companion object {
@@ -53,16 +55,19 @@ class HomeFragAdapter(
         val btnComment: ImageView = view.findViewById(R.id.imgPostComment)
         val txtDesp: TextView = view.findViewById(R.id.txtPostDesp)
         val btnMoreOption: ImageView = view.findViewById(R.id.imgMoreOptions)
+        val rlAdminOption: RelativeLayout = view.findViewById(R.id.rlAdminOption)
+        val btnApprove: Button = view.findViewById(R.id.btnApprove)
+        val btnDecline: Button = view.findViewById(R.id.btnDecline)
 
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeFragAdapter.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostFragAdapter.ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.post_item_layout, parent, false)
         return ViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: HomeFragAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: PostFragAdapter.ViewHolder, position: Int) {
         db = DBHelper(context)
         val postId = dataset[position].postID
         val imgPath = dataset[position].postImgPath
@@ -88,10 +93,28 @@ class HomeFragAdapter(
 
 
 
+
+
 //        edit button visible only to authors of posts
         if (dataset[position].username == userInfo.get("username")) {
             holder.btnMoreOption.visibility = View.VISIBLE
         }
+
+        //related to content moderation
+        if(dataset[position].approval == 0){
+            holder.rlAdminOption.visibility = View.VISIBLE
+        }
+
+        holder.btnDecline.setOnClickListener{
+            db.declinePost(dataset[position].postID, usertype)
+            refreshRecyclerView(db.getPostsToApprove())
+        }
+
+        holder.btnApprove.setOnClickListener{
+            db.approvePost(dataset[position].postID, usertype)
+            refreshRecyclerView(db.getPostsToApprove())
+        }
+
 
         holder.txtUsername.text = dataset[position].username
         holder.txtDesp.text = dataset[position].txtDesp
@@ -109,11 +132,14 @@ class HomeFragAdapter(
             holder.imgPost.visibility = View.GONE
         }
 
+        //dec
         holder.btnComment.setOnClickListener {
             openComments(dataset[position].postID)
+
         }
 
-        //todo: set the like or dislike on or off as per each user. get the likeid
+
+        //set the like or dislike on or off as per each user. get the likeid
 
         holder.btnLike.setOnClickListener {
             if (holder.btnLike.tag == LIKE_ON) {

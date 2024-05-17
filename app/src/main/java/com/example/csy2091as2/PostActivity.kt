@@ -156,7 +156,7 @@ class PostActivity : AppCompatActivity() {
                     imagePath = ""
                 }
 
-                if(db.savePost(POST_ID, username, desc, imagePath) != -1L){
+                if(db.savePost(POST_ID, username, desc, imagePath, userType) != -1L){
                     Toast.makeText(this, "Post added", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(this, "unsuccesful", Toast.LENGTH_SHORT).show()

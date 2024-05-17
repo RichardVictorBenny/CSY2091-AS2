@@ -393,17 +393,17 @@ class DBHelper(context: Context) :
 
     }
 
-    fun savePost(postId: Int, username: String, desc: String, imagePath: String?): Long {
+    fun savePost(postId: Int, username: String, desc: String, imagePath: String?, usertype: String?): Long {
 
         return if (postId == 0) {
-            addPost(username, desc, imagePath)
+            addPost(username, desc, imagePath, usertype)
         } else {
-            updatePost(postId, desc, imagePath).toLong()
+            updatePost(postId, desc, imagePath, usertype).toLong()
         }
 
     }
 
-    fun addPost(username: String, desc: String, imagePath: String?): Long {
+    fun addPost(username: String, desc: String, imagePath: String?, usertype: String?): Long {
         val dateTime = LocalDateTime.now().toString()
 
 
@@ -414,14 +414,20 @@ class DBHelper(context: Context) :
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
         postValues.put(colPostImage, imagePath)
-        postValues.put(colPostApproval, 0)
+
+        when (usertype) {
+            "admin" -> postValues.put(colPostApproval, 1)
+            "student" -> postValues.put(colPostApproval, 0)
+            else -> postValues.put(colPostApproval, 0)
+        }
+
 
         return db.insert(tblPost, null, postValues)
 
 
     }
 
-    fun updatePost(postId: Int, desc: String, imagePath: String?): Int {
+    fun updatePost(postId: Int, desc: String, imagePath: String?, usertype: String?): Int {
         val dateTime = LocalDateTime.now().toString()
 
 
@@ -430,7 +436,11 @@ class DBHelper(context: Context) :
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
         postValues.put(colPostImage, imagePath)
-        postValues.put(colPostApproval, 0)
+        when (usertype) {
+            "admin" -> postValues.put(colPostApproval, 1)
+            "student" -> postValues.put(colPostApproval, 0)
+            else -> postValues.put(colPostApproval, 0)
+        }
 
         val where = "$colPostID = ?"
         val args = arrayOf(postId.toString())
@@ -440,9 +450,7 @@ class DBHelper(context: Context) :
 
     }
 
-    fun approvePost(postId: Int, superuser: Int){
 
-    }
 
     fun getPost10(): MutableList<Post> {
         val query =
@@ -489,7 +497,8 @@ class DBHelper(context: Context) :
                 val username = cursor.getString(cursor.getColumnIndexOrThrow(colPostUsername))
                 val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(colPostImage))
                 val txtDesp = cursor.getString(cursor.getColumnIndexOrThrow(colPostDesc))
-                postList.add(Post(postId, username, imgPath, txtDesp))
+                val approval = cursor.getString(cursor.getColumnIndexOrThrow(colPostApproval))
+                postList.add(Post(postId, username, imgPath, txtDesp, approval.toInt()))
 
             } while (cursor.moveToNext())
         }
@@ -533,6 +542,45 @@ class DBHelper(context: Context) :
 
         return commentList
 
+    }
+
+    fun getPostsToApprove(): MutableList<Post>{
+        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = 0"
+        return getPost(query, null)
+    }
+
+    fun getPostsDecline(): MutableList<Post>{
+        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = -1"
+        return getPost(query, null)
+    }
+
+    fun getPostsToApproveCount(): String {
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = 0"
+        return db.rawQuery(query, null).count.toString()
+    }
+
+    fun getDeclinedPostsCount(): String{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblPost WHERE $colPostApproval = -1"
+        return db.rawQuery(query, null).count.toString()
+    }
+
+
+    fun declinePost(postId: Int, superuser: String): Boolean{
+        val db = writableDatabase
+        val values = ContentValues()
+        values.put(colPostApproval, -1)
+        values.put(colPostApprovalBy, superuser)
+        return db.update(tblPost, values, "$colPostID = ?", arrayOf(postId.toString())) > 0
+    }
+
+    fun approvePost(postId: Int, superuser: String): Boolean{
+        val db = writableDatabase
+        val values = ContentValues()
+        values.put(colPostApproval, -1)
+        values.put(colPostApprovalBy, superuser)
+        return db.update(tblPost, values, "$colPostID = ?", arrayOf(postId.toString())) > 0
     }
 
 }

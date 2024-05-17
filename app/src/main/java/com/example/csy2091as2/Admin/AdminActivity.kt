@@ -3,27 +3,21 @@ package com.example.csy2091as2.Admin
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.util.Patterns
 import android.view.Gravity
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.csy2091as2.CommentAdapter
+import com.example.csy2091as2.ContentModerationActivity
 import com.example.csy2091as2.DBHelper
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Hashing
@@ -31,13 +25,15 @@ import com.example.csy2091as2.R
 import com.example.csy2091as2.RegisterActivity
 import com.example.csy2091as2.UpdateInfoActivity
 import com.example.csy2091as2.databinding.ActivityAdminBinding
-import com.example.csy2091as2.databinding.ActivityPostBinding
+import java.util.Timer
+import java.util.TimerTask
 
 class AdminActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAdminBinding
     private lateinit var db: DBHelper
     private lateinit var userInfo: Map<String, String>
+    private val timer = Timer()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdminBinding.inflate(layoutInflater)
@@ -61,6 +57,40 @@ class AdminActivity : AppCompatActivity() {
             val activity = Intent(this, UpdateInfoActivity::class.java)
             startActivity(activity)
         }
+
+        binding.rlPostApproval.setOnClickListener{
+            val activity = Intent(this, ContentModerationActivity::class.java)
+            activity.putExtra("modType", "toApprove")
+            startActivity(activity)
+        }
+
+        binding.rlPostDeclined.setOnClickListener{
+            val activity = Intent(this, ContentModerationActivity::class.java)
+            activity.putExtra("modType", "declined")
+            startActivity(activity)
+        }
+
+
+
+
+
+        //time set for the posts to update every minute no need to destroy
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                val postsToApprove = db.getPostsToApproveCount()
+                val postsDeclined = db.getDeclinedPostsCount()
+                runOnUiThread {
+                    binding.txtApproveCount.text = postsToApprove
+                    binding.txtDeclinedCount.text = postsDeclined
+                }
+            }
+        }, 0, 60000)
+    }
+
+    override fun onDestroy() {
+        //to deletes the timer when the activity is destroyed
+        super.onDestroy()
+        timer.cancel()
     }
 
     @SuppressLint("ClickableViewAccessibility")

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".Admin.AdminOptionFragment">
+    tools:context=".Admin.AdminActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Admin Options"
+            android:text="@string/admin_options"
             android:textStyle="bold"
             android:textSize="30sp"
             android:textAlignment="center"
@@ -53,7 +53,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="New Student"
+                    android:text="New User"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnPrimary"
                     android:textSize="20sp" />
@@ -61,7 +61,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Manually add student"
+                    android:text="Manually add student or admin"
                     android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp" />
 
@@ -93,7 +93,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Remove a student"
+                    android:text="Remove a student or admin"
                     android:textColor="?attr/colorOnSecondary"
                     android:textSize="16sp" />
 
@@ -122,7 +122,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Reset password for students"
+                    android:text="Reset password \n"
                     android:textColor="?attr/colorOnSecondary"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -151,7 +151,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Update student info"
+                    android:text="Update student or admin info"
                     android:textColor="?attr/colorOnPrimary"
                     android:textSize="16sp" />
 
@@ -179,7 +179,10 @@
             android:alignmentMode="alignMargins"
             android:columnOrderPreserved="false">
 
-            <LinearLayout
+
+
+            <RelativeLayout
+                android:id="@+id/rlPostApproval"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
@@ -187,23 +190,45 @@
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/green"
                 android:background="@drawable/dashboard_box_bg">
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Info 1"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/new_posts"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/posts_awaiting_approval"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Additional Info 1"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:text="99"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:id="@+id/txtApproveCount"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"/>
 
-            <LinearLayout
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rlPostDeclined"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_rowWeight="1"
@@ -211,21 +236,42 @@
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/red"
                 android:background="@drawable/dashboard_box_bg">
-                <TextView
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Info 1"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp" />
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/declined_posts"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/posts_that_were_declined_or_removed"
+                        android:textColor="?attr/colorOnPrimary"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Additional Info 1"
-                    android:textColor="@android:color/darker_gray"
-                    android:textSize="14sp" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:text="99"
+                    android:textColor="?attr/colorOnPrimary"
+                    android:id="@+id/txtDeclinedCount"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="30sp"
+                    android:textStyle="bold"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="10dp"/>
+
+
+            </RelativeLayout>
 
 
 

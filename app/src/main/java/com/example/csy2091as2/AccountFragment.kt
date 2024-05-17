@@ -1,9 +1,7 @@
 package com.example.csy2091as2
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.User
-import kotlin.math.log
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -55,7 +52,7 @@ class AccountFragment : Fragment() {
         val rvAccFrag = view.findViewById<RecyclerView>(R.id.rvAccountFrag)
         rvAccFrag.layoutManager = LinearLayoutManager(requireContext())
         var posts = db.getPostUser(userName)
-        rvAccFrag.adapter = HomeFragAdapter(posts, requireContext())
+        rvAccFrag.adapter = PostFragAdapter(posts, requireContext())
 
 //        sign out user and clear all data saved
         val btnLogout: Button = view.findViewById(R.id.btnLogout)

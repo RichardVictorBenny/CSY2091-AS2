@@ -9,8 +9,9 @@
     <color name="shadow">#6a4807</color>
 
 
-    <color name="red">#ED2939</color>
-    <color name="one">#58D68D</color>
+    <color name="red">#E67754</color>
+    <color name="dark_grey">@android:color/darker_gray</color>
+    <color name="green">#4AD384</color>
     <color name="two">#7FB3D5</color>
     <color name="three">#BB8FCE</color>
 </resources>

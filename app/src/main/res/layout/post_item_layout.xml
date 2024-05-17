@@ -12,7 +12,7 @@
 
         <ImageView
             android:id="@+id/imgPostLike"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_marginStart="6dp"
             android:layout_marginTop="6dp"
@@ -21,7 +21,7 @@
             android:src="@drawable/ic_thumb_up_off_alt_24" />
         <ImageView
             android:id="@+id/imgPostDislike"
-            android:layout_width="60dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"
             android:layout_toEndOf="@+id/imgPostLike"
             android:layout_marginTop="6dp"
@@ -84,5 +84,37 @@
 
 
     </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rlAdminOption"
+        android:visibility="gone"
+        >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerInParent="true">
+            <Button
+                android:id="@+id/btnDecline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/red"
+                android:text=" Decline "
+                android:textStyle="bold"
+                android:layout_marginEnd="16dp"/>
+
+            <Button
+                android:id="@+id/btnApprove"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/green"
+                android:textStyle="bold"
+                android:text="Approve" />
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>
