@@ -37,6 +37,11 @@ class RegisterDetailsFragment : Fragment() {
     private val validations = Validations()
     private lateinit var db: DBHelper
 
+    private fun getParentActivity(){
+
+
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -188,18 +193,23 @@ class RegisterDetailsFragment : Fragment() {
                 )
                 // checking if the data is being updated or not
                 if (data != null && data.getString("toUpdate") != "") {
+                    //updating details of a user
                     if (db.updateUser(data.getString("toUpdate")!!, bundle)) {
                         Toast.makeText(requireContext(), "User Detials updated", Toast.LENGTH_SHORT)
                             .show()
-                        activity?.finish()
+
+                        // clearing the current user
+                        val parent = requireActivity() as UpdateInfoActivity
+                        parent.clearSearch(activity?.supportFragmentManager?.beginTransaction(), this)
+
+
                     } else {
                         Toast.makeText(requireContext(), "Action unsuccessful", Toast.LENGTH_SHORT)
                             .show()
                     }
 
 
-                    //updating details of a user
-                    Log.d("TAG", "onCreateView: ${data.getString("toUpdate")}")
+
                 } else {
 
                     //adding a new user

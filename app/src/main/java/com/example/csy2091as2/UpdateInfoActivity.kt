@@ -5,14 +5,19 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.User
+import com.example.csy2091as2.databinding.ActivityMainBinding
 import com.example.csy2091as2.databinding.ActivityUpdateInfoBinding
 
 class UpdateInfoActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityUpdateInfoBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val binding =ActivityUpdateInfoBinding.inflate(layoutInflater)
+        binding =ActivityUpdateInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val db = DBHelper(this)
         val username = Functions.getUserinfo(this)["username"]!!
@@ -34,6 +39,11 @@ class UpdateInfoActivity : AppCompatActivity() {
             transaction.replace(R.id.fcUpdateInfo, fragment).commit()
 
             binding.llUpdateSearch.visibility = View.GONE
+        }
+
+        binding.btnInfoClear.setOnClickListener{
+
+            clearSearch(transaction, fragment)
         }
 
 
@@ -71,5 +81,12 @@ class UpdateInfoActivity : AppCompatActivity() {
         bundle.putString("usertype", studentInfo.userType)
         bundle.putString("toUpdate", studentInfo.username)//used to see if it is an update or a new user
         return bundle
+    }
+
+    fun clearSearch(transaction: FragmentTransaction?, fragment: Fragment){
+        if (transaction != null) {
+            transaction.remove(fragment).commitNow()
+        }
+        binding.edtUpdateInfo.setText("")
     }
 }

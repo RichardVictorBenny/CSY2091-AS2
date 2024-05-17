@@ -100,7 +100,7 @@ class PostActivity : AppCompatActivity() {
 
             popUp.setOnMenuItemClickListener {
                 when(it.title){
-                    "Delete" -> {
+                    "Delete" -> { //deleting image from folder if image is
                         imagePath = File(imgFolder, "placeholder.jpg").absolutePath
                         binding.imgPost.setImageURI(File(imgFolder, "placeholder.jpg").toUri())
                     }
@@ -125,7 +125,6 @@ class PostActivity : AppCompatActivity() {
                     var outputStream : OutputStream? = null
 
                     if (imgFolder.exists()) {
-                        Log.d("TAG", "onCreate: $FILE_NAME")
                         val newImage = File(imgFolder, FILE_NAME)
 
 //                        deleting previous image if a new image is selected.
@@ -134,6 +133,7 @@ class PostActivity : AppCompatActivity() {
                         }
 
 //                        copying image to internal storage.
+                        // TODO: to be changed into a blob
                         outputStream = FileOutputStream(newImage)
                         inputStream?.use { input ->
                             outputStream.use { output ->
