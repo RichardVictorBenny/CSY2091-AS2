@@ -80,11 +80,7 @@ class HomeFragAdapter(
                 setButton(holder.btnDislike, DISLIKE_ON)
                 setButton(holder.btnLike, LIKE_OFF)
             }
-
-//            db.isLiked(likeId!!)
-            Log.d("TAG", "onBindViewHolder: pass")
-        } catch (e: Exception){
-            Log.d("TAG", "onBindViewHolder: $e")
+        } catch (_: Exception){
             setButton(holder.btnLike, LIKE_OFF)
             setButton(holder.btnDislike, DISLIKE_OFF)
         }
