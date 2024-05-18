@@ -31,7 +31,7 @@ class UpdateInfoActivity : AppCompatActivity() {
 //            admin page needs a user to be searched in order to
 
         if(intent.getStringExtra("toUpdateUser") == "y"){
-            studentInfo = db.fetchUser(username)
+            studentInfo = db.fetchUser(username)!!
             val bundle = makeBundle(studentInfo)
             fragment.arguments = bundle
 

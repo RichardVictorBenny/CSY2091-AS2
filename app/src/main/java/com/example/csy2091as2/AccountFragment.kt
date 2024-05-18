@@ -44,7 +44,7 @@ class AccountFragment : Fragment() {
         val txtUsername = view.findViewById<TextView>(R.id.txtUserUsername)
         val txtFullname = view.findViewById<TextView>(R.id.txtUserFullName)
 
-        val currentUser = db.fetchUser(userName)
+        val currentUser = db.fetchUser(userName)!!
 
         txtUsername.setText(userName)
         txtFullname.setText(getFullName(currentUser))

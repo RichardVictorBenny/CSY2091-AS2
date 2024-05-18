@@ -121,7 +121,7 @@ class AdminActivity : AppCompatActivity() {
             if (student != userInfo.get("username")) { //check to prevent self deletion
 
                 try {
-                    val studentInfo = db.fetchUser(student)
+                    val studentInfo = db.fetchUser(student)!!
                     llDetails.visibility = View.VISIBLE
                     txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
                     txtEmail.setText(studentInfo.email)
@@ -188,7 +188,7 @@ class AdminActivity : AppCompatActivity() {
             }
 
             try {
-                val studentInfo = db.fetchUser(student)
+                val studentInfo = db.fetchUser(student)!!
                 llUpdate.visibility = View.VISIBLE
                 txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
                 txtEmail.setText(studentInfo.email)

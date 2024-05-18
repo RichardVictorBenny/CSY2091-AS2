@@ -3,6 +3,7 @@ package com.example.csy2091as2
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
+import android.database.CursorIndexOutOfBoundsException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Bundle
@@ -279,6 +280,7 @@ class DBHelper(context: Context) :
 //        return arrayOf(statusCred)
     }
 
+
     fun updateUser(
         oldUsername: String,
         bundle: Bundle
@@ -343,7 +345,7 @@ class DBHelper(context: Context) :
         }
     }
 
-    fun fetchUser(username: String): User {
+    fun fetchUser(username: String): User? {
         val db = this.readableDatabase
         val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName = ?"
         val cursor = db.rawQuery(query, arrayOf(username))
@@ -351,17 +353,23 @@ class DBHelper(context: Context) :
             "SELECT * FROM $tblAuthentication WHERE $colAuthUserName = ?",
             arrayOf(username)
         )
-        cursor.moveToFirst()
-        auth.moveToFirst()
-        return User(
-            cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserFirstName)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserMiddleName)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserLastName)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail)),
-            cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB)),
-            auth.getString(auth.getColumnIndexOrThrow(colAuthType))
-        )
+        if(cursor.moveToFirst() && auth.moveToFirst()){
+            try {
+                return User(
+                    cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(colUserFirstName)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(colUserMiddleName)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(colUserLastName)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB)),
+                    auth.getString(auth.getColumnIndexOrThrow(colAuthType))
+                )
+            } catch (_: CursorIndexOutOfBoundsException){}
+        }
+
+        return null
+
+
     }
 
     fun userCheck(username: String): Boolean {
@@ -611,12 +619,20 @@ class DBHelper(context: Context) :
                 val email =cursor.getString(cursor.getColumnIndexOrThrow(colUserEmail))
                 val dob =cursor.getString(cursor.getColumnIndexOrThrow(colUserDOB))
                 users.add(User(username, firstName, middleName, lastName, email, dob, "student"))
+
             } while (cursor.moveToNext())
 
 
         }
 
         return users
+    }
+
+    fun getUserCount(): Int{
+        val db = this.readableDatabase
+        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'student')"
+        val cursor = db.rawQuery(query, null)
+        return cursor.count
     }
 
 }
