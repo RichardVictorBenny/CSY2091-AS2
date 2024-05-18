@@ -19,6 +19,7 @@ import com.google.android.material.textfield.TextInputLayout
  * A simple [Fragment] subclass.
  * Use the [RegisterPasswordFragment.newInstance] factory method to
  * create an instance of this fragment.
+ * adds the a user to the db.
  */
 class RegisterPasswordFragment : Fragment() {
 
@@ -60,10 +61,7 @@ class RegisterPasswordFragment : Fragment() {
             validation.emptyCheck(layPassword, edtPassword)
             validation.emptyCheck(layConfirmPassword, edtConfirmPassword)
 
-
-
-
-
+            //checking if the passwords match
             if (edtPassword.text.toString() != edtConfirmPassword.text.toString()) {
                 layPassword.error = "passwords do not match"
                 layConfirmPassword.error = "passwords do not match"
@@ -85,9 +83,12 @@ class RegisterPasswordFragment : Fragment() {
                 val password = Hashing.doHashing(edtPassword.text.toString(), userName)
                 val newUserType = bundle.getString("usertype")
 
-                val currentUserType = if(Functions.getUserinfo(requireContext())["usertype"]?.isNotEmpty() == true) Functions.getUserinfo(requireContext())["usertype"] else "student"
-                Log.d("TAG", "onCreateView: newUserType: $newUserType")
-                // TODO: make account
+                val currentUserType =
+                    if (Functions.getUserinfo(requireContext())["usertype"]?.isNotEmpty() == true) Functions.getUserinfo(
+                        requireContext()
+                    )["usertype"] else "student"
+
+                //make account
                 val result: Array<Long> = db.addUser(
                     userName,
                     firstName,
@@ -98,31 +99,24 @@ class RegisterPasswordFragment : Fragment() {
                     password,
                     newUserType
                 )
+
+
+                //check if user was added to both user and authentication table
                 if (result[0] > 0 && result[1] > 0) {
-
                     Toast.makeText(requireContext(), "User Added", Toast.LENGTH_SHORT).show()
-                    if(currentUserType == "admin"){
-                        activity?.finish()
-                    } else if(currentUserType == "student"){
-                        activity?.finish()
-
-                        startActivity(Intent(requireContext(), LoginActivity::class.java))
-                    } else{
-                        Log.d("TAG", "onCreateView: $currentUserType")
+                    when(currentUserType){
+                        "admin"-> activity?.finish()
+                        "student" -> {
+                            activity?.finish()
+                            startActivity(Intent(requireContext(), LoginActivity::class.java))
+                        }
+                        else-> {}
                     }
                 } else {
                     Toast.makeText(requireContext(), "Unsuccessful", Toast.LENGTH_SHORT).show()
                 }
             }
         }
-
-
-//        if(bundle?.getString("firstname") != null){
-//            Log.d("TAG", "onCreateView: firstname found")
-//        } else{
-//            Log.d("TAG", "onCreateView: not found")
-//        }
-
 
         return view
     }

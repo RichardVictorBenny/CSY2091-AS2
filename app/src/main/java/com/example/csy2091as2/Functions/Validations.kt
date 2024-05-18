@@ -8,14 +8,24 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.time.LocalDate
 
+/**
+ * class that handles all the validation
+ */
 class Validations {
 
+    /**
+     * check if no value is provided and sets appropriate errors
+     */
     fun emptyCheck(inputLayout: TextInputLayout, inputEditText: TextInputEditText){
         if(inputLayout.error == null){
             inputLayout.error = if(inputEditText.text.toString().isEmpty()) "Can't be empty" else null
 //            Log.d("TAG", "emptyCheck: ${inputLayout.error}")
         }
     }
+
+    /**
+     * checks if no value is provided after staring to type
+     */
     fun setErrorOnChange(inputLayout: TextInputLayout, editText: TextInputEditText) {
         editText.doOnTextChanged { text, start, before, count ->
 
@@ -26,6 +36,9 @@ class Validations {
         }
     }
 
+    /**
+     * checks if only the allowed characters are entered for a charSequence
+     */
     fun checkForSpecialChars(inputLayout: TextInputLayout, text: CharSequence?){
 //        Log.d("TAG", "checkForSpecialChars: starrt")
         if (text != null && inputLayout.error == null) {
@@ -35,6 +48,10 @@ class Validations {
 //        Log.d("TAG", "checkForSpecialChars: ${inputLayout.error}")
     }
 
+    /**
+     * checks if only the allowed characters are entered
+     * overloaded function
+     */
     fun checkForSpecialChars(inputLayout: TextInputLayout, text: String){
         if(inputLayout.error == null){
             inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~0123456789]".toRegex())) "Invalid Character" else null
@@ -42,6 +59,9 @@ class Validations {
 
     }
 
+    /**
+     * validated the date. has to be within the range of the secondary school student and tutor
+     */
     fun valiateDate(inpDate: LocalDate, layout: TextInputLayout){
         val currentDate = LocalDate.now()
 
@@ -53,6 +73,9 @@ class Validations {
         }
     }
 
+    /**
+     * checks if the email used is the school email
+     */
     fun validateEmail(editText: TextInputEditText, layout: TextInputLayout): Boolean {
 
 
@@ -69,6 +92,9 @@ class Validations {
         return emailDomains.contains(inputDomain)
     }
 
+    /**
+     * checks if the email is in the correct format
+     */
     fun validateEmailOnChange(editText: TextInputEditText, layout: TextInputLayout){
         editText.doOnTextChanged { text, start, before, count ->
             val email: String = editText.text.toString()

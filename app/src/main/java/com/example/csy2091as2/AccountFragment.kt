@@ -14,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.User
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -75,6 +72,9 @@ class AccountFragment : Fragment() {
         return view
     }
 
+    /**
+     * generates full name of the user
+     */
     private fun getFullName(user: User): String {
         return user.firstName+" "+user.lastName
     }

@@ -7,13 +7,10 @@ import android.database.CursorIndexOutOfBoundsException
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.os.Bundle
-import android.util.Log
 import com.example.csy2091as2.Functions.Comment
 import com.example.csy2091as2.Functions.Functions
-import com.example.csy2091as2.Functions.Hashing
 import com.example.csy2091as2.Functions.Post
 import com.example.csy2091as2.Functions.User
-import java.sql.Blob
 import java.time.LocalDateTime
 
 class DBHelper(context: Context) :
@@ -99,18 +96,6 @@ class DBHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-//        val qryPost = "ALTER TABLE $tblPost ADD COLUMN $colPostApprovalBy INTEGER\n"
-//////            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor Text, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
-//
-//        val adminInset = "INSERT INTO $tblUsers ($colAuthUserName, $colUserFirstName, $colUserMiddleName, $colUserLastName, $colUserDOB, $colUserEmail) VALUES ('admin', 'Admin', '', 'User', 'YYYY-MM-DD', 'admin@middlemore.co.uk')"
-//        val adminAuth = "INSERT INTO $tblAuthentication ($colAuthUserName, $colAuthPassword, $colAuthType) VALUES ('admin',${Hashing.doHashing("admin", "admin")}, 'admin')"
-////
-//        if (db != null) {
-////            db.execSQL("CREATE TABLE new_likes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT,$colLikePost INTEGER,$colLikeAuthor TEXT,$colLikeLiked INTEGER DEFAULT 0,$colLikeDisliked INTEGER DEFAULT 0,$colLikeAddTime TEXT)")
-//            db.execSQL(adminAuth)
-//            db.execSQL(adminInset)
-//
-//        }
     }
 
     private fun saveLike(likeId: Int, values: ContentValues): Boolean{
@@ -606,10 +591,15 @@ class DBHelper(context: Context) :
         return db.update(tblPost, values, "$colPostID = ?", arrayOf(postId.toString())) > 0
     }
 
-    fun getStudents(): MutableList<User> {
+    fun getUsers(userType: String): MutableList<User> {
         val users = mutableListOf<User>()
         val db = this.readableDatabase
-        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'student')"
+        var query = when(userType){
+            "admin" -> {"SELECT * FROM $tblUsers"}
+            "student" -> "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'students')"
+            else->{""}
+        }
+
         val cursor = db.rawQuery(query, null)
         if(cursor.moveToFirst()){
             do{val username = cursor.getString(cursor.getColumnIndexOrThrow(colAuthUserName))
@@ -630,7 +620,7 @@ class DBHelper(context: Context) :
 
     fun getUserCount(): Int{
         val db = this.readableDatabase
-        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'student')"
+        val query = "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'admin')"
         val cursor = db.rawQuery(query, null)
         return cursor.count
     }

@@ -23,7 +23,7 @@
             android:name=".UpdateInfoActivity"
             android:exported="false" />
         <activity
-            android:name=".Admin.AdminActivity"
+            android:name=".AdminActivity"
             android:exported="false" />
 
         <provider

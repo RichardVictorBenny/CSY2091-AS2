@@ -86,7 +86,6 @@ class LoginActivity : AppCompatActivity() {
 
 
             if (userType == "student" || userType == "admin") {
-//                Log.d("TAG", "onCreate: Authentication Successful")
                 //making a file with username and access level for global access.
                 val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE)
                 val editor = userInfo.edit()
@@ -114,6 +113,5 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: work on reseting password
     }
 }

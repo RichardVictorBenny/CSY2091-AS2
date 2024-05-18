@@ -2,7 +2,10 @@ package com.example.csy2091as2.Functions
 
 import java.sql.Blob
 
-class Post(
+/**
+ * class representing a post
+ */
+data class Post(
     val postID: Int,
     val username: String,
     val txtDesp: String,

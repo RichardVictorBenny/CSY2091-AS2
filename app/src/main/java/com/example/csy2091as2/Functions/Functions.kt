@@ -19,9 +19,16 @@ import java.util.Calendar
 import java.util.Date
 import kotlin.random.Random
 
+
+/**
+ * this is a class that has some general purpose functions
+ */
 class Functions {
 
     companion object {
+        /**
+         * function to get the userinfo saved inside the sharedPreference file
+         */
         fun getUserinfo(context: Context): Map<String, String> {
             var userType: String = ""
             var userName: String = ""
@@ -47,12 +54,18 @@ class Functions {
             return map
         }
 
+        /**
+         * functions that removes sharedPreferences files
+         */
         fun logout(context: Context?) {
             context?.getSharedPreferences("userinfo", Context.MODE_PRIVATE)?.edit()?.clear()?.commit()
             context?.getSharedPreferences("currentUser", Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
             context?.startActivity(Intent(context, LoginActivity::class.java))
         }
 
+        /**
+         * converts a URI object to ByteArray
+         */
         fun uriToByteArray(contentResolver: ContentResolver, uri: Uri): ByteArray? {
             var byteArray: ByteArray? = null
             try {
@@ -64,7 +77,9 @@ class Functions {
         }
 
 
-
+        /**
+         * converts ByteArray to Bitmap
+         */
         fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
             return try {
                 val inputStream = ByteArrayInputStream(byteArray)
@@ -77,7 +92,9 @@ class Functions {
     }
 
 
-
+    /**
+     * Function to get the current date in specific format of yyyy-MM-dd
+     */
     fun getCurrentDate(): String {
         val date = Date()
         val calendar = Calendar.getInstance()
@@ -90,6 +107,9 @@ class Functions {
         return formatDate("$year-$month-$day")
     }
 
+    /**
+     * converts date format to yyyy-MM-dd
+     */
     fun formatDate(dateString: String): String {
         // possible formats that can be used
         val possibleFormats = arrayOf(
@@ -115,6 +135,9 @@ class Functions {
         return dateString
     }
 
+    /**
+     * Generates a unique random String
+     */
     fun generateRandomName(username: String): String {
         val currentDateTime = LocalDateTime.now()
         val formattedDateTime =
@@ -123,6 +146,9 @@ class Functions {
         return "$formattedDateTime-$username-$randomSuffix.jpg"
     }
 
+    /**
+     * function that convets ByteArray to URI
+     */
     fun byteArrayToUri(context: Context, byteArray: ByteArray): Uri? {
         val fileName = "temp_image_file"
         val file = File(context.cacheDir, fileName)

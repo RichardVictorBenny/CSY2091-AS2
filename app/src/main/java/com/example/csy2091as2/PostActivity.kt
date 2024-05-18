@@ -34,14 +34,10 @@ import java.io.OutputStream
 class PostActivity : AppCompatActivity() {
     private lateinit var photo: File
     private lateinit var binding: ActivityPostBinding
-    private lateinit var photoURI: Uri //to keep
+    private lateinit var photoURI: Uri
     private val validaiton = Validations()
     private val db = DBHelper(this)
-    private val functions = Functions()
-
-
     private  var image: ByteArray? = null
-
     private lateinit var galleryLauncher: ActivityResultLauncher<Intent>
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
 

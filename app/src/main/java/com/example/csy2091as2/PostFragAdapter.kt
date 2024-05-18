@@ -237,6 +237,9 @@ class PostFragAdapter(
 
     }
 
+    /**
+     * opens the drawer that has analytics data
+     */
     private fun openAnalytics(position: Int) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -273,6 +276,9 @@ class PostFragAdapter(
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    /**
+     * gets the analytics data from database
+     */
     private fun getAnalyticValues(position: Int): Map<String, String>{
         val likes = db.getLikeCount(dataset[position].postID).toString()
         val dislikes = db.getDislikeCount(dataset[position].postID).toString()
@@ -286,6 +292,9 @@ class PostFragAdapter(
     }
 
 
+    /**
+     * opens a drawer that has comments inside it]
+     */
     private fun openComments(postID: Int) {
         val dialog = Dialog(context)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -332,11 +341,17 @@ class PostFragAdapter(
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    /**
+     * sets appropriate tags to the like and dislike buttons
+     */
     private fun setButton(imgView: ImageView, resource: Int) {
         imgView.setImageResource(resource)
         imgView.tag = resource
     }
 
+    /**
+     * deletes the posts for database
+     */
     private fun delete(position: Int) {
         if (db.deletePost(dataset[position].postID) == 1) {
             Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
@@ -346,6 +361,9 @@ class PostFragAdapter(
         }
     }
 
+    /**
+     * opens the Post Activity with all the post contents loaded to edit
+     */
     private fun edit(position: Int) {
         val activity = Intent(context, PostActivity::class.java)
         activity.putExtra("postId", dataset[position].postID)
@@ -353,6 +371,9 @@ class PostFragAdapter(
     }
 
 
+    /**
+     * function to refresh recyclerview when dataset is changed
+     */
     @SuppressLint("NotifyDataSetChanged")
     fun refreshRecyclerView(newData: MutableList<Post>) {
         dataset.clear()
@@ -360,6 +381,6 @@ class PostFragAdapter(
         notifyDataSetChanged()
     }
 
-    override fun getItemCount() = dataset.size
+    override fun getItemCount(): Int = dataset.size
 
 }

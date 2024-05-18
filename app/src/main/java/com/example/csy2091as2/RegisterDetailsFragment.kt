@@ -21,10 +21,7 @@ import com.google.android.material.textfield.TextInputLayout
 import java.time.LocalDate
 import java.util.Calendar
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+
 
 /**
  * A simple [Fragment] subclass.
@@ -37,10 +34,6 @@ class RegisterDetailsFragment : Fragment() {
     private val validations = Validations()
     private lateinit var db: DBHelper
 
-    private fun getParentActivity(){
-
-
-    }
 
 
     override fun onCreateView(
@@ -225,6 +218,9 @@ class RegisterDetailsFragment : Fragment() {
         return view
     }
 
+    /**
+     * opens the dataPicker
+     */
     private fun showDatePickerDialog(edtDatePicker: TextInputEditText, view: View) {
 
         val calendar = Calendar.getInstance()
@@ -247,8 +243,6 @@ class RegisterDetailsFragment : Fragment() {
 
         datePickerDialog.show()
     }
-
-    // TODO: move validations to a different Class.
 
 
 }

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.csy2091as2.Functions.Post
 import com.example.csy2091as2.databinding.ActivityContentModerationBinding
 
+
 class ContentModerationActivity : AppCompatActivity() {
     private lateinit var binding: ActivityContentModerationBinding
     private lateinit var db: DBHelper

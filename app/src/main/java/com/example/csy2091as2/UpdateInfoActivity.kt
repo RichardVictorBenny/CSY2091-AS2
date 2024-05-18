@@ -2,14 +2,12 @@ package com.example.csy2091as2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.User
-import com.example.csy2091as2.databinding.ActivityMainBinding
 import com.example.csy2091as2.databinding.ActivityUpdateInfoBinding
 
 class UpdateInfoActivity : AppCompatActivity() {
@@ -32,7 +30,7 @@ class UpdateInfoActivity : AppCompatActivity() {
 
         if(intent.getStringExtra("toUpdateUser") == "y"){
             studentInfo = db.fetchUser(username)!!
-            val bundle = makeBundle(studentInfo)
+            val bundle = makeStudentBundle(studentInfo)
             fragment.arguments = bundle
 
             transaction = supportFragmentManager.beginTransaction()
@@ -56,7 +54,7 @@ class UpdateInfoActivity : AppCompatActivity() {
                 try {
 
                     studentInfo = db.fetchUser(userSearch)
-                    val bundle = makeBundle(studentInfo!!)
+                    val bundle = makeStudentBundle(studentInfo!!)
                     fragment.arguments = bundle
 
 
@@ -70,7 +68,10 @@ class UpdateInfoActivity : AppCompatActivity() {
         }
     }
 
-    private fun makeBundle(studentInfo: User): Bundle{
+    /**
+     * makes a bundle of students
+     */
+    private fun makeStudentBundle(studentInfo: User): Bundle{
         val bundle = Bundle()
         bundle.putString("firstname", studentInfo.firstName)
         bundle.putString("middlename", studentInfo.middleName)
@@ -83,6 +84,9 @@ class UpdateInfoActivity : AppCompatActivity() {
         return bundle
     }
 
+    /**
+     * clears the search filed and removes the fragment
+     */
     fun clearSearch(transaction: FragmentTransaction?, fragment: Fragment){
         if (transaction != null) {
             transaction.remove(fragment).commitNow()

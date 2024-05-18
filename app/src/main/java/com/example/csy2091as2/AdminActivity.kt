@@ -1,4 +1,4 @@
-package com.example.csy2091as2.Admin
+package com.example.csy2091as2
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -17,23 +17,23 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import com.example.csy2091as2.ContentModerationActivity
-import com.example.csy2091as2.DBHelper
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.Functions.Hashing
-import com.example.csy2091as2.R
-import com.example.csy2091as2.RegisterActivity
-import com.example.csy2091as2.UpdateInfoActivity
 import com.example.csy2091as2.databinding.ActivityAdminBinding
 import java.util.Timer
 import java.util.TimerTask
 
+/**
+ * class that handles most admin related tasks
+ */
 class AdminActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAdminBinding
     private lateinit var db: DBHelper
     private lateinit var userInfo: Map<String, String>
     private val timer = Timer()
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAdminBinding.inflate(layoutInflater)
@@ -87,12 +87,18 @@ class AdminActivity : AppCompatActivity() {
         }, 0, 600)
     }
 
+    /**
+     * remove the timer
+     */
     override fun onDestroy() {
         //to deletes the timer when the activity is destroyed
         super.onDestroy()
         timer.cancel()
     }
 
+    /**
+     * open the drawer that handles deleting user
+     */
     @SuppressLint("ClickableViewAccessibility")
     private fun openDeleteDrawer() {
         val dialog = Dialog(this)
@@ -159,6 +165,9 @@ class AdminActivity : AppCompatActivity() {
         dialog.window?.setGravity(Gravity.BOTTOM)
     }
 
+    /**
+     * opens a drawer that handles password updateing
+     */
     private fun openUpdatePasswordDrawer() {
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -237,13 +246,6 @@ class AdminActivity : AppCompatActivity() {
             } catch (_: Exception) {
             }
         }
-
-
-
-
-
-
-
         dialog.show()
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,

@@ -1,7 +1,6 @@
 package com.example.csy2091as2
 
 import android.app.Dialog
-import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -15,7 +14,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
-import com.example.csy2091as2.Admin.AdminActivity
 import com.example.csy2091as2.Functions.Functions
 import com.example.csy2091as2.databinding.ActivityMainBinding
 
@@ -65,12 +63,18 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    /**
+     * function that handles changing fragments in MainActivity
+     */
     private fun replaceFragment(fragment: Fragment){
         val fragmentTransaction : FragmentTransaction = supportFragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frame_container, fragment)
         fragmentTransaction.commitNow()
     }
 
+    /**
+     * open a drawer letting user pick an option
+     */
     private fun openDrawer(){
         val dialog = Dialog(this)
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
