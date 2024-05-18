@@ -51,7 +51,7 @@
         android:layout_marginStart="16dp"
         android:background="@drawable/circular_background"
         android:scaleType="centerCrop"
-        android:src="@drawable/placeholder"
+        android:src="@drawable/ic_new_post"
         android:visibility="gone" />
 
 

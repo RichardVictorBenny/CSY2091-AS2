@@ -9,14 +9,16 @@ import android.os.Bundle
 import android.util.Log
 import com.example.csy2091as2.Functions.Comment
 import com.example.csy2091as2.Functions.Functions
+import com.example.csy2091as2.Functions.Hashing
 import com.example.csy2091as2.Functions.Post
 import com.example.csy2091as2.Functions.User
+import java.sql.Blob
 import java.time.LocalDateTime
 
 class DBHelper(context: Context) :
     SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
     companion object {
-        const val DATABASE_VERSION = 19
+        const val DATABASE_VERSION = 1
 
         //        const val DATABASE_VERSION = 1
         const val DATABASE_NAME = "campusconnect"
@@ -83,6 +85,9 @@ class DBHelper(context: Context) :
         val qryLike =
             "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor TEXT, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
 
+
+
+
         if (db != null) {
             db.execSQL(qryUser)
             db.execSQL(qryAuthentication)
@@ -93,16 +98,18 @@ class DBHelper(context: Context) :
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        val qryPost = "ALTER TABLE $tblPost ADD COLUMN $colPostApprovalBy INTEGER\n"
-//            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor Text, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
-
-        if (db != null) {
-//            db.execSQL("CREATE TABLE new_likes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT,$colLikePost INTEGER,$colLikeAuthor TEXT,$colLikeLiked INTEGER DEFAULT 0,$colLikeDisliked INTEGER DEFAULT 0,$colLikeAddTime TEXT)")
-            db.execSQL("DROP TABLE $tblLikes")
-            db.execSQL("DROP TABLE new_likes")
-            db.execSQL("CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor TEXT, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)")
-
-        }
+//        val qryPost = "ALTER TABLE $tblPost ADD COLUMN $colPostApprovalBy INTEGER\n"
+//////            "CREATE TABLE $tblLikes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT, $colLikePost INTEGER, $colLikeAuthor Text, $colLikeLiked INTEGER DEFAULT 0, $colLikeDisliked INTEGER DEFAULT 0, $colLikeAddTime TEXT)"
+//
+//        val adminInset = "INSERT INTO $tblUsers ($colAuthUserName, $colUserFirstName, $colUserMiddleName, $colUserLastName, $colUserDOB, $colUserEmail) VALUES ('admin', 'Admin', '', 'User', 'YYYY-MM-DD', 'admin@middlemore.co.uk')"
+//        val adminAuth = "INSERT INTO $tblAuthentication ($colAuthUserName, $colAuthPassword, $colAuthType) VALUES ('admin',${Hashing.doHashing("admin", "admin")}, 'admin')"
+////
+//        if (db != null) {
+////            db.execSQL("CREATE TABLE new_likes ($colLikeId INTEGER PRIMARY KEY AUTOINCREMENT,$colLikePost INTEGER,$colLikeAuthor TEXT,$colLikeLiked INTEGER DEFAULT 0,$colLikeDisliked INTEGER DEFAULT 0,$colLikeAddTime TEXT)")
+//            db.execSQL(adminAuth)
+//            db.execSQL(adminInset)
+//
+//        }
     }
 
     private fun saveLike(likeId: Int, values: ContentValues): Boolean{
@@ -398,17 +405,17 @@ class DBHelper(context: Context) :
 
     }
 
-    fun savePost(postId: Int, username: String, desc: String, imagePath: String?, usertype: String?): Long {
+    fun savePost(postId: Int, username: String, desc: String, usertype: String?, image: ByteArray?): Long {
 
         return if (postId == 0) {
-            addPost(username, desc, imagePath, usertype)
+            addPost(username, desc, usertype, image)
         } else {
-            updatePost(postId, desc, imagePath, usertype).toLong()
+            updatePost(postId, desc, usertype, image).toLong()
         }
 
     }
 
-    fun addPost(username: String, desc: String, imagePath: String?, usertype: String?): Long {
+    fun addPost(username: String, desc: String, usertype: String?, image: ByteArray?): Long {
         val dateTime = LocalDateTime.now().toString()
 
 
@@ -418,7 +425,8 @@ class DBHelper(context: Context) :
         postValues.put(colPostTime, dateTime)
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
-        postValues.put(colPostImage, imagePath)
+//        postValues.put(colPostImage, imagePath)
+        postValues.put(colPostImageBlob, image)
 
         when (usertype) {
             "admin" -> postValues.put(colPostApproval, 1)
@@ -432,7 +440,7 @@ class DBHelper(context: Context) :
 
     }
 
-    fun updatePost(postId: Int, desc: String, imagePath: String?, usertype: String?): Int {
+    fun updatePost(postId: Int, desc: String, usertype: String?, image: ByteArray?): Int {
         val dateTime = LocalDateTime.now().toString()
 
 
@@ -440,7 +448,8 @@ class DBHelper(context: Context) :
         val postValues = ContentValues()
         postValues.put(colPostUpdateTime, dateTime)
         postValues.put(colPostDesc, desc)
-        postValues.put(colPostImage, imagePath)
+//        postValues.put(colPostImage, imagePath)
+        postValues.put(colPostImageBlob, image)
         when (usertype) {
             "admin" -> postValues.put(colPostApproval, 1)
             "student" -> postValues.put(colPostApproval, 0)
@@ -500,10 +509,11 @@ class DBHelper(context: Context) :
             do {
                 val postId: Int = cursor.getInt(cursor.getColumnIndexOrThrow(colPostID))
                 val username = cursor.getString(cursor.getColumnIndexOrThrow(colPostUsername))
-                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(colPostImage))
+//                val imgPath = cursor.getString(cursor.getColumnIndexOrThrow(colPostImage))
                 val txtDesp = cursor.getString(cursor.getColumnIndexOrThrow(colPostDesc))
                 val approval = cursor.getString(cursor.getColumnIndexOrThrow(colPostApproval))
-                postList.add(Post(postId, username, imgPath, txtDesp, approval.toInt()))
+                val image = cursor.getBlob(cursor.getColumnIndexOrThrow(colPostImageBlob))
+                postList.add(Post(postId, username, txtDesp, approval.toInt(), image))
 
             } while (cursor.moveToNext())
         }

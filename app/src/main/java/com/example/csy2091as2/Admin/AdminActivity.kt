@@ -140,6 +140,7 @@ class AdminActivity : AppCompatActivity() {
                 if (llDetails.visibility == View.VISIBLE) {
                     if (db.deleteUser(student)) {
                         llDetails.visibility = View.GONE
+                        edtStudent.setText("")
                         Toast.makeText(this, "$student is deleted", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -223,6 +224,7 @@ class AdminActivity : AppCompatActivity() {
                         )
                     ) {
                         llUpdate.visibility = View.GONE
+                        edtNewPassword.setText("")
                         Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show()
                         if (student == userInfo.get("username")) {
                             Functions.logout(this)
@@ -232,7 +234,7 @@ class AdminActivity : AppCompatActivity() {
                 } else {
                     Toast.makeText(this, "No new Password set", Toast.LENGTH_SHORT).show()
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
             }
         }
 

@@ -1,9 +1,17 @@
 package com.example.csy2091as2.Functions
 
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import com.example.csy2091as2.LoginActivity
+import java.io.ByteArrayInputStream
+import java.io.File
+import java.io.FileOutputStream
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -44,7 +52,31 @@ class Functions {
             context?.getSharedPreferences("currentUser", Context.MODE_PRIVATE)?.edit()?.clear()?.apply()
             context?.startActivity(Intent(context, LoginActivity::class.java))
         }
+
+        fun uriToByteArray(contentResolver: ContentResolver, uri: Uri): ByteArray? {
+            var byteArray: ByteArray? = null
+            try {
+                contentResolver.openInputStream(uri).use { inputStream ->
+                    byteArray = inputStream?.readBytes()
+                }
+            } catch (_: Exception){}
+            return byteArray
+        }
+
+
+
+        fun byteArrayToBitmap(byteArray: ByteArray): Bitmap? {
+            return try {
+                val inputStream = ByteArrayInputStream(byteArray)
+                BitmapFactory.decodeStream(inputStream)
+            } catch (e: Exception) {
+                null
+            }
+        }
+
     }
+
+
 
     fun getCurrentDate(): String {
         val date = Date()
@@ -89,5 +121,20 @@ class Functions {
             currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
         val randomSuffix = Random.nextInt(100000) // Generate a random number between 0 and 999
         return "$formattedDateTime-$username-$randomSuffix.jpg"
+    }
+
+    fun byteArrayToUri(context: Context, byteArray: ByteArray): Uri? {
+        val fileName = "temp_image_file"
+        val file = File(context.cacheDir, fileName)
+
+        try {
+            FileOutputStream(file).use { outputStream ->
+                outputStream.write(byteArray)
+            }
+            return FileProvider.getUriForFile(context, "com.example.csy2091as2.fileprovider", file)
+        } catch (_: Exception) {
+        }
+
+        return null
     }
 }

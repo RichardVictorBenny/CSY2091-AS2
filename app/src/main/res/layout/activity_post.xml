@@ -61,7 +61,7 @@
                     android:layout_height="400dp"
                     android:background="@android:color/transparent"
                     android:layout_margin="16dp"
-                    android:src="@drawable/placeholder" />
+                    android:src="@drawable/ic_new_post" />
 
                 <TextView
                     android:layout_width="wrap_content"

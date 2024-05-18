@@ -66,6 +66,8 @@
     <string name="refresh_data">Refresh Data</string>
     <string name="likness_of_the_post">Likness of the post:</string>
     <string name="refresh_to_view_the_latest">Refresh to view the latest</string>
+    <string name="enter_password_or_generate">Enter password or Generate</string>
+    <string name="copy">copy</string>
 
 
 </resources>

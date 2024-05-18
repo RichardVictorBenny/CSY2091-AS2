@@ -8,6 +8,7 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -43,6 +44,7 @@ class PostFragAdapter(
     private var likeId : Int? = null
     private val timer = Timer()
 
+
     companion object {
         val LIKE_ON = R.drawable.ic_thumb_up_on_24
         val LIKE_OFF = R.drawable.ic_thumb_up_off_alt_24
@@ -52,7 +54,7 @@ class PostFragAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        val txtUsername = view.findViewById<TextView>(R.id.txtPostUsername)
+        val txtUsername: TextView = view.findViewById(R.id.txtPostUsername)
         val btnLike: ImageView = view.findViewById(R.id.imgPostLike)
         val btnDislike: ImageView = view.findViewById(R.id.imgPostDislike)
         val imgPost: ImageView = view.findViewById(R.id.imgOnPost)
@@ -65,6 +67,7 @@ class PostFragAdapter(
         val txtLikeCount: TextView = view.findViewById(R.id.txtLikeCount)
         val txtDislikeCount: TextView = view.findViewById(R.id.txtDislikeCount)
 
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -76,7 +79,9 @@ class PostFragAdapter(
     override fun onBindViewHolder(holder: ViewHolder, @SuppressLint("RecyclerView") position: Int) {
         db = DBHelper(context)
         val postId = dataset[position].postID
-        val imgPath = dataset[position].postImgPath
+        var likes = 0
+        var dislikes = 0
+
 
         // just defaults to no likes, need to see if the user already liked and do appropriately, need to block user from liking and dislikeing at the same time
         likeId = db.getLikeId(username, postId)
@@ -108,18 +113,21 @@ class PostFragAdapter(
             holder.txtLikeCount.visibility = View.VISIBLE
             holder.txtDislikeCount.visibility = View.VISIBLE
 //getting likes and dislikes
-            timer.scheduleAtFixedRate(object : TimerTask() {
-                override fun run() {
-                    val likes = db.getLikeCount(dataset[position].postID).toString()
-                    val dislikes = db.getDislikeCount(dataset[position].postID).toString()
-                    holder.txtLikeCount.post {
-                        holder.txtLikeCount.text = likes
+            try{
+                timer.scheduleAtFixedRate(object : TimerTask() {
+                    override fun run() {
+                        likes = db.getLikeCount(dataset[position].postID)
+                        dislikes = db.getDislikeCount(dataset[position].postID)
+                        holder.txtLikeCount.post {
+                            holder.txtLikeCount.text = likes.toString()
+                        }
+                        holder.txtDislikeCount.post {
+                            holder.txtDislikeCount.text = dislikes.toString()
+                        }
                     }
-                    holder.txtDislikeCount.post {
-                        holder.txtDislikeCount.text = dislikes
-                    }
-                }
-            }, 0, 600)
+                }, 0, 6000)
+            } catch (_:Exception){}
+
         }
 
         //related to content moderation
@@ -146,12 +154,11 @@ class PostFragAdapter(
 
 
 
-        if (imgPath != "") {
+        if (dataset[position].image != null) {
             try {
-                val imageBitmap = BitmapFactory.decodeFile(dataset[position].postImgPath)
-                holder.imgPost.setImageBitmap(imageBitmap)
-            } catch (_: Exception) {
 
+                holder.imgPost.setImageBitmap(Functions.byteArrayToBitmap(dataset[position].image!!))
+            } catch (_: Exception) {
             }
         } else {
             holder.imgPost.visibility = View.GONE
@@ -171,6 +178,9 @@ class PostFragAdapter(
                 setButton(holder.btnLike, LIKE_OFF)
 //                remove like form db and refresh
                 db.removeFromLike(likeId!!)
+                likes--
+                holder.txtLikeCount.text = likes.toString()
+
 
 
             } else if (holder.btnLike.tag == LIKE_OFF) {
@@ -178,6 +188,8 @@ class PostFragAdapter(
                 // add like to db and remove dislike if prev disliked  and todo refresh
                 db.addLike(username, postId)
                 likeId = db.getLikeId(username, postId)
+                likes++
+                holder.txtLikeCount.text = likes.toString()
                 setButton(holder.btnDislike, DISLIKE_OFF)
             }
         }
@@ -187,18 +199,23 @@ class PostFragAdapter(
                 setButton(holder.btnDislike, DISLIKE_OFF)
                 // remove dislike form db and refresh
                 db.removeFromLike(likeId!!)
+                dislikes--
+                holder.txtDislikeCount.text = dislikes.toString()
+
             } else if (holder.btnDislike.tag == DISLIKE_OFF) {
                 setButton(holder.btnDislike, DISLIKE_ON)
                 // add dislike to db and remove like if prev liked and todo: refresh
                 db.addDislike(username, postId)
                 likeId = db.getLikeId(username, postId)
+                dislikes++
+                holder.txtDislikeCount.text = dislikes.toString()
                 setButton(holder.btnLike, LIKE_OFF)
 
             }
         }
 
-        holder.btnMoreOption.setOnClickListener {
-            val popUp = PopupMenu(context, it)
+        holder.btnMoreOption.setOnClickListener { currentView ->
+            val popUp = PopupMenu(context, currentView)
 
             if(username == dataset[position].username){
                 popUp.menu.add("Edit")
@@ -215,7 +232,6 @@ class PostFragAdapter(
                 }
                 true
             }
-            true
         }
 
 
@@ -239,11 +255,11 @@ class PostFragAdapter(
 
 
         btnRefresh.setOnClickListener{
-            val analytics = getAnalyticValues(position)
+            val analytic = getAnalyticValues(position)
 
-            txtLike.text = analytics["likes"]
-            txtDislike.text = analytics["dislikes"]
-            txtLikeness.text = analytics["ratio"]
+            txtLike.text = analytic["likes"]
+            txtDislike.text = analytic["dislikes"]
+            txtLikeness.text = analytic["ratio"]
         }
 
 
@@ -279,7 +295,7 @@ class PostFragAdapter(
         //set the adapter for commments here
         val rvComment = dialog.findViewById<RecyclerView>(R.id.rvComment)
         rvComment.layoutManager = LinearLayoutManager(context)
-        var comments = db.getComment10(postID)
+        val comments = db.getComment10(postID)
         rvComment.adapter = CommentAdapter(comments, context)
 
 
@@ -337,6 +353,7 @@ class PostFragAdapter(
     }
 
 
+    @SuppressLint("NotifyDataSetChanged")
     fun refreshRecyclerView(newData: MutableList<Post>) {
         dataset.clear()
         dataset.addAll(newData)
@@ -344,4 +361,5 @@ class PostFragAdapter(
     }
 
     override fun getItemCount() = dataset.size
+
 }

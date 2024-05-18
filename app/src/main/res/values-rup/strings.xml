@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Campus Connect</string>
+    Certainly! Here are the provided strings translated into Armenian:
+
+    ```xml
+    <string name="title_home">Գլխավոր</string>
+    <string name="title_dashboard">Վահանակ</string>
+    <string name="title_notifications">Ծանուցումներ</string>
+    <string name="login">Մուտք գործել</string>
+    <string name="welcome">Բարի գալուստ</string>
+    <string name="welcome_sub_text"> </string>
+    <string name="username">Օգտանուն</string>
+    <string name="password">Գաղտնաբառ</string>
+    <string name="save_login">Հիշել ինձ</string>
+    <string name="forgot_password">Մոռացե՞լ եք գաղտնաբառը</string>
+    <string name="sign_up">Արդյունավետիրեք հաշիվ</string>
+    <string name="register">Գրանցվել</string>
+    <string name="firstname">Անուն</string>
+    <string name="middlename">Մէջանուն</string>
+    <string name="lastname">Ազգանուն</string>
+    <string name="email">Էլ․ հասցե</string>
+    <string name="year">Կուրսը</string>
+    <string name="dateofbirth">Ծննդյան ամսաթիվ</string>
+    <string name="register_account">Գրանցվել</string>
+    <string name="school_name">ՄԻԴԼԼՈՐ ԿԱՏՈԼԻԱԱՆ ԴՐԱՉԵԱԿԱԳԱՅԻՆ</string>
+    <string name="company_name">Ռիչարդ ԻՆԿ.</string>
+    <string name="from">ից</string>
+    <string name="register_tagline">Գրանցեք հաշիվ ՝ տեսելու համար իսկականության իսկականությունը իմ ընկերներին!</string>
+    <string name="register_warning">Օգտագործեք ճիշտ տվյալներ և ձեր դպրոցի էլ․ հասցե</string>
+    <string name="register_account_next">Հաջորդ</string>
+    <string name="password_confirm">Գաղտնաբառը հաստատեք</string>
+    <string name="hello_blank_fragment">Ողջույն դատարկ ֆրագմենտ\nՈղջույն դատ
+
+արկ ֆրագմենտ\nՈղջույն դատարկ ֆրագմենտ\nՈղջույն դատարկ ֆրագմենտ\nՈղջույն դատարկ ֆրագմենտ</string>
+    <string name="back">Հետ</string>
+    <string name="btmHome">Գլխավոր</string>
+    <string name="btmChat">Հանդիպում</string>
+    <string name="btmPost">Հրապարակել</string>
+    <string name="btmGroups">Խմբեր</string>
+    <string name="btmAccount">Հաշիվ</string>
+    <string name="choose">Ընտրեք</string>
+    <string name="post">Հրապարակել</string>
+    <string name="poll">Արտոնագրել</string>
+    <string name="new_post">Նոր գրառում</string>
+    <string name="post_caption">Տեքստը այստեղ գրեք...</string>
+    <string name="logout">Դուրս գալ</string>
+    <string name="postInstructions">Սեղմեք նկարի ընտրիչը նկարի ընտրման համար:\nՀիմնական ռեժիմով հետո սեղմեք շատերկան</string>
+    <string name="comments">Դիմումներ</string>
+    <string name="edtComment">Մուտքագրեք ձեր մեկնաբանությունը</string>
+    <string name="delete">Ջնջել</string>
+    <string name="delete_warning">Զգուշացում!! այս գործը ամբողջությամբ հեռացնելու է աշակերտը և բոլոր տվյալները կորուստացնելու է:</string>
+    <string name="search_box">Օգտագործողի որոնում</string>
+    <string name="delete_student">Ուսանողի ջնջել</string>
+    <string name="update">Թարմացնել</string>
+    <string name="generate">Գեներա
+
+ցնել</string>
+    <string name="update_password">Գաղտնաբառը թարմացնել</string>
+    <string name="update_user">օգտատերերի անունը կամ էլ․ հասցե</string>
+    <string name="update_info">Տվյալները թարմացնել</string>
+    <string name="clear_page">" էջը մաքրել "</string>
+    <string name="new_posts">Նոր գրառումներ</string>
+    <string name="posts_awaiting_approval">Հաստատվելու համար գրառումներ\n</string>
+    <string name="declined_posts">Մերժված գրառումներ</string>
+    <string name="posts_that_were_declined_or_removed">Մերժված կամ հեռացված\nգրառումներ</string>
+    <string name="admin_options">Ադմինի ընտրանքներ</string>
+    <string name="post_to_approve">Մերժված գրառումներ</string>
+    <string name="analytics">Վիճակահանություն</string>
+    <string name="likes">Չափահաս</string>
+    <string name="dislike">Հակահաս</string>
+    <string name="refresh_data">Թարմացնել տվյալները</string>
+    <string name="likness_of_the_post">Հավանաբարություն գրառումի:</string>
+    <string name="refresh_to_view_the_latest">Վիճակագրելու համար թարմացնել</string>
+    <string name="enter_password_or_generate">Մուտքագրեք գաղտնաբառ կամ գեներացրեք</string>
+    <string name="copy">Պատճենել</string>
+    ```
+</resources>
