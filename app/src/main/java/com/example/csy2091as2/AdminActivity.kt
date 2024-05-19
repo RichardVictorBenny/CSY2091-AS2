@@ -124,7 +124,9 @@ class AdminActivity : AppCompatActivity() {
                         Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
                     }
                 }
-                if (student != userInfo.get("username")) { //check to prevent self deletion
+                //check to prevent self deletion
+                if (student != userInfo.get("username")) {
+
 
                     try {
                         val studentInfo = db.fetchUser(student)!!

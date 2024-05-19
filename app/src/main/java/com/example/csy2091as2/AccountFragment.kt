@@ -63,7 +63,9 @@ class AccountFragment : Fragment() {
         val btnEditInfo = view.findViewById<ImageView>(R.id.imgEditInfo)
         btnEditInfo.setOnClickListener{
             val activity = Intent(requireContext(), UpdateInfoActivity::class.java)
-            activity.putExtra("toUpdateUser", "y")//to know that the activity is invoked by edit account button.
+
+            //to know that the activity is invoked by edit account button.
+            activity.putExtra("toUpdateUser", "y")
             startActivity(activity)
         }
 

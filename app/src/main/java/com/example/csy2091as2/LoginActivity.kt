@@ -23,9 +23,6 @@ class LoginActivity : AppCompatActivity() {
 
 
         val sharedPref = getSharedPreferences("userinfo", Context.MODE_PRIVATE)
-//        val editor = sharedPref.edit()
-//        editor.clear()
-//        editor.commit()
 
         if (sharedPref.contains("username") && sharedPref.contains("usertype")) {
             val activity = Intent(this, MainActivity::class.java)

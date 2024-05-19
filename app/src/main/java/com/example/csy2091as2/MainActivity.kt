@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.btmChat -> null
                 R.id.btmGroup -> replaceFragment(StudentsFragment())
                 R.id.btmAccount -> replaceFragment(AccountFragment())
-                R.id.btmPost -> openDrawer() // make new activity for polls etc.
+                R.id.btmPost -> openDrawer()
             }
             true
         }
@@ -84,7 +84,6 @@ class MainActivity : AppCompatActivity() {
         val poll: LinearLayout = dialog.findViewById(R.id.layPoll)
         
         post.setOnClickListener{
-//            Toast.makeText(applicationContext, "Make new post", Toast.LENGTH_SHORT).show()
             val activity = Intent(this, PostActivity::class.java)
 
             activity.putExtra("usertype", userType)

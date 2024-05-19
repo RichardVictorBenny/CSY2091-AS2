@@ -17,7 +17,6 @@ class Validations {
     fun emptyCheck(inputLayout: TextInputLayout, inputEditText: TextInputEditText){
         if(inputLayout.error == null){
             inputLayout.error = if(inputEditText.text.toString().isEmpty()) "Can't be empty" else null
-//            Log.d("TAG", "emptyCheck: ${inputLayout.error}")
         }
     }
 
@@ -52,12 +51,12 @@ class Validations {
      * checks if only the allowed characters are entered for a charSequence
      */
     fun checkForSpecialCharsNum(inputLayout: TextInputLayout, text: CharSequence?){
-//        Log.d("TAG", "checkForSpecialChars: starrt")
+
         if (text != null && inputLayout.error == null) {
-//            Log.d("TAG", text.toString())
+
             inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~0123456789]".toRegex())) "Invalid Character" else null
         }
-//        Log.d("TAG", "checkForSpecialChars: ${inputLayout.error}")
+
     }
 
     /**

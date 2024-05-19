@@ -68,9 +68,11 @@ class PostActivity : AppCompatActivity() {
             val post: Post = db.getPostSingle(POST_ID)[0]
 
             if(post.image == null){
-                binding.imgPost.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.star_big_on)) //set placeholder here
+                //set placeholder here
+                binding.imgPost.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.star_big_on))
             } else{
-                binding.imgPost.setImageBitmap(Functions.byteArrayToBitmap(post.image)) // set img form post here
+                // set img form post here
+                binding.imgPost.setImageBitmap(Functions.byteArrayToBitmap(post.image))
             }
             binding.inpedtPostDesp.setText(post.txtDesp)
         }
@@ -92,7 +94,8 @@ class PostActivity : AppCompatActivity() {
 
             popUp.setOnMenuItemClickListener {
                 when(it.title){
-                    "Delete" -> { //deleting image from folder if image is
+                    "Delete" -> {
+                        //deleting image from folder if image is
                         binding.imgPost.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.star_big_on))
                         image = null
 
@@ -143,7 +146,7 @@ class PostActivity : AppCompatActivity() {
                 data?.let {
                     binding.imgPost.setImageURI(it.data)
                     photoURI = it.data!!
-                    image = Functions.uriToByteArray(contentResolver, photoURI)!! //ByteArray needed here
+                    image = Functions.uriToByteArray(contentResolver, photoURI)!!
                 }
             }
         }

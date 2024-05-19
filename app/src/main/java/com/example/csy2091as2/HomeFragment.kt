@@ -28,7 +28,7 @@ class HomeFragment : Fragment() {
     ): View? {
         val userInfo = Functions.getUserinfo(requireContext())
         db = DBHelper(requireContext())
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         val rvHomeFrag = view.findViewById<RecyclerView>(R.id.rvHomeFrag)

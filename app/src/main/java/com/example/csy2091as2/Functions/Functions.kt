@@ -101,7 +101,7 @@ class Functions {
 
         // fetching date
         val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH) + 1 // Month is zero-based, so add 1
+        val month = calendar.get(Calendar.MONTH) + 1
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         return formatDate("$year-$month-$day")
@@ -142,7 +142,7 @@ class Functions {
         val currentDateTime = LocalDateTime.now()
         val formattedDateTime =
             currentDateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
-        val randomSuffix = Random.nextInt(100000) // Generate a random number between 0 and 999
+        val randomSuffix = Random.nextInt(100000)
         return "$formattedDateTime-$username-$randomSuffix.jpg"
     }
 
