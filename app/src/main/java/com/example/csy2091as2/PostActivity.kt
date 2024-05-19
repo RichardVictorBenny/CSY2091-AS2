@@ -42,6 +42,8 @@ class PostActivity : AppCompatActivity() {
     private lateinit var cameraLauncher: ActivityResultLauncher<Intent>
 
 
+
+
     companion object {
         var POST_ID = 0
     }
@@ -200,7 +202,6 @@ class PostActivity : AppCompatActivity() {
     private fun selectFromCamera() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         photo = getPhoto()
-        Log.d("TAG", "selectFromCamera: ${photo.absolutePath}")
 
         //need to wrap inside FileProvider because private file uri can't be shared between process
         val fileProvider =

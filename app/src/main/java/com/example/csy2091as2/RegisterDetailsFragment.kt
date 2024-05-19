@@ -161,8 +161,8 @@ class RegisterDetailsFragment : Fragment() {
 
             }
             if (layUsername.error == null) {
+// username validation
 
-//                    Log.d("TAG", "onCreateView: ${data?.getString("username")}")
                 try {
                     if (layUsername.error == null && edtUsername.text.toString() == data?.getString(
                             "username"
@@ -176,7 +176,6 @@ class RegisterDetailsFragment : Fragment() {
                     }
                 } catch (_: Exception) {
                 }
-// username validation
 
             }
 
