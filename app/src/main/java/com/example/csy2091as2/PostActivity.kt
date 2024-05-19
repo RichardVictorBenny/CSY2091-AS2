@@ -66,7 +66,7 @@ class PostActivity : AppCompatActivity() {
             val post: Post = db.getPostSingle(POST_ID)[0]
 
             if(post.image == null){
-                binding.imgPost.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.picture_frame)) //set placeholder here
+                binding.imgPost.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.star_big_on)) //set placeholder here
             } else{
                 binding.imgPost.setImageBitmap(Functions.byteArrayToBitmap(post.image)) // set img form post here
             }
@@ -101,10 +101,12 @@ class PostActivity : AppCompatActivity() {
             }
             true
         }
-
+        validaiton.setErrorOnChange(binding.inplayPostDesp, binding.inpedtPostDesp, "")
         binding.btnPost.setOnClickListener {
 
             validaiton.emptyCheck(binding.inplayPostDesp, binding.inpedtPostDesp)
+            validaiton.checkForSpecialChars(binding.inplayPostDesp, binding.inpedtPostDesp.text.toString())
+
 
             if (binding.inplayPostDesp.error == null) {
                 var desc: String = binding.inpedtPostDesp.text.toString()

@@ -459,9 +459,9 @@ class DBHelper(context: Context) :
 
 
 
-    fun getPost10(): MutableList<Post> {
+    fun getPosts(): MutableList<Post> {
         val query =
-            "SELECT * FROM $tblPost WHERE $colPostApproval = 1 ORDER BY $colPostID DESC LIMIT 10"
+            "SELECT * FROM $tblPost WHERE $colPostApproval = 1 ORDER BY $colPostID DESC"
         return getPost(query, null)
 
     }
@@ -530,11 +530,11 @@ class DBHelper(context: Context) :
 
     }
 
-    fun getComment10(postId: Int): MutableList<Comment> {
+    fun getComment(postId: Int): MutableList<Comment> {
         var commentList = mutableListOf<Comment>()
         val db = this.readableDatabase
         val query =
-            "SELECT * FROM $tblComment WHERE $colCommentPostId = ? ORDER BY $colCommentID DESC LIMIT 10"
+            "SELECT * FROM $tblComment WHERE $colCommentPostId = ? ORDER BY $colCommentID DESC"
         val cursor = db.rawQuery(query, arrayOf(postId.toString()))
         if (cursor.moveToFirst()) {
             do {
@@ -596,7 +596,7 @@ class DBHelper(context: Context) :
         val db = this.readableDatabase
         var query = when(userType){
             "admin" -> {"SELECT * FROM $tblUsers"}
-            "student" -> "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'students')"
+            "student" -> "SELECT * FROM $tblUsers WHERE $colAuthUserName IN (SELECT $colAuthUserName FROM $tblAuthentication WHERE $colAuthType = 'student')"
             else->{""}
         }
 

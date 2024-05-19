@@ -33,7 +33,7 @@ class HomeFragment : Fragment() {
 
         val rvHomeFrag = view.findViewById<RecyclerView>(R.id.rvHomeFrag)
         rvHomeFrag.layoutManager = LinearLayoutManager(requireContext())
-        var posts = db.getPost10()
+        var posts = db.getPosts()
         rvHomeFrag.adapter = PostFragAdapter(posts,requireContext())
 
         return view

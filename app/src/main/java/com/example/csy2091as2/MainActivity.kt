@@ -91,11 +91,6 @@ class MainActivity : AppCompatActivity() {
             activity.putExtra("username", userName)
             startActivity(activity)
         }
-        
-        poll.setOnClickListener{
-            Toast.makeText(applicationContext, "Make new poll", Toast.LENGTH_SHORT).show()
-        }
-
         dialog.show()
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))

@@ -22,7 +22,6 @@ import java.time.LocalDate
 import java.util.Calendar
 
 
-
 /**
  * A simple [Fragment] subclass.
  * Use the [RegisterDetailsFragment.newInstance] factory method to
@@ -33,7 +32,6 @@ class RegisterDetailsFragment : Fragment() {
     private val functions = Functions()
     private val validations = Validations()
     private lateinit var db: DBHelper
-
 
 
     override fun onCreateView(
@@ -100,9 +98,10 @@ class RegisterDetailsFragment : Fragment() {
             edtEmail.setText(data.getString("email"))
             edtDateOfBirth.setText(data.getString("dateofbirth"))
             edtUsername.setText(data.getString("username"))
-            inptxtAutocomplete.setText(data.getString("usertype"))
+            inptxtAutocomplete.setText(data.getString("usertype"), false)
 
         }
+
 
         layDateOfBirth.setEndIconOnClickListener {
             showDatePickerDialog(edtDateOfBirth, view)
@@ -116,6 +115,7 @@ class RegisterDetailsFragment : Fragment() {
 
         validations.setErrorOnChange(layFirstName, edtFirstName)
         validations.setErrorOnChange(layLastName, edtLastName)
+        validations.validateEmailOnChange(edtEmail, layEmail)
         btnRegisterNext.setOnClickListener {
 
 
@@ -127,9 +127,10 @@ class RegisterDetailsFragment : Fragment() {
             validations.emptyCheck(layUsername, edtUsername)
 
             //character validation
-            validations.checkForSpecialChars(layFirstName, edtFirstName.text.toString())
-            validations.checkForSpecialChars(layLastName, edtLastName.text.toString())
-            validations.checkForSpecialChars(layMiddleName, edtMiddleName.text.toString())
+            validations.checkForSpecialCharsNum(layFirstName, edtFirstName.text.toString())
+            validations.checkForSpecialCharsNum(layLastName, edtLastName.text.toString())
+            validations.checkForSpecialCharsNum(layMiddleName, edtMiddleName.text.toString())
+            validations.checkForSpecialChars(layUsername, edtUsername.text.toString())
             validations.setErrorOnChange(layUsername, edtUsername)
 
             validations.checkForSpecialChars(layUsername, edtUsername.text.toString())
@@ -142,29 +143,40 @@ class RegisterDetailsFragment : Fragment() {
                 validations.valiateDate(dateInput, layDateOfBirth)
 
             }
-
-            if (!(data != null && data.getString("toUpdate") != "")) {
-                //email validation
-                if (edtEmail.text.toString().isNotEmpty()) {
-                    try {
-                        validations.validateEmailOnChange(edtEmail, layEmail)
-                        if (db.emailCheck(edtEmail.text.toString())) {
-                            layEmail.error = "Email already in use"
-                        } else {
-                            layEmail.error = null
-                        }
-                    } catch (_: CursorIndexOutOfBoundsException) {
-                    } catch (exception: Exception) {
-                        layEmail.error = "Invalid Email"
+            validations.validateEmailOnChange(edtEmail, layEmail)
+            //email validation
+            if (edtEmail.text.toString().isNotEmpty() && layEmail.error == null) {
+                try {
+                    if (layEmail.error == null && edtEmail.text.toString() == data?.getString("email")) {
+                        layEmail.error = null
+                    } else if (layEmail.error == null && db.emailCheck(edtEmail.text.toString())) {
+                        layEmail.error = "Email already in use"
+                    } else {
+                        layEmail.error = null
                     }
-
+                } catch (_: CursorIndexOutOfBoundsException) {
+                } catch (exception: Exception) {
+                    layEmail.error = "Invalid Email"
                 }
-                if (layUsername.error == null) {
+
+            }
+            if (layUsername.error == null) {
+
+//                    Log.d("TAG", "onCreateView: ${data?.getString("username")}")
+                try {
+                    if (layUsername.error == null && edtUsername.text.toString() == data?.getString(
+                            "username"
+                        )
+                    ) {
+                        layUsername.error = null
+                    } else if (db.userCheck(edtUsername.text.toString())) {
+                        layUsername.error = "Username already in use"
+                    } else {
+                        layUsername.error = null
+                    }
+                } catch (_: Exception) {
+                }
 // username validation
-                    layUsername.error =
-                        if (edtUsername.text.toString() == "" && db.userCheck(edtUsername.text.toString())) "Username taken" else null
-                }
-
 
             }
 
@@ -186,21 +198,37 @@ class RegisterDetailsFragment : Fragment() {
                 )
                 // checking if the data is being updated or not
                 if (data != null && data.getString("toUpdate") != "") {
+                    bundle.putString("toUpdate", data.getString("toUpdate"))
                     //updating details of a user
-                    if (db.updateUser(data.getString("toUpdate")!!, bundle)) {
-                        Toast.makeText(requireContext(), "User Detials updated", Toast.LENGTH_SHORT)
-                            .show()
+                    try {
+                        if (db.updateUser(data.getString("toUpdate")!!, bundle)) {
+                            Toast.makeText(
+                                requireContext(),
+                                "User Details updated",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
 
-                        // clearing the current user
-                        val parent = requireActivity() as UpdateInfoActivity
-                        parent.clearSearch(activity?.supportFragmentManager?.beginTransaction(), this)
+                            // clearing the current user
+                            val parent = requireActivity() as UpdateInfoActivity
+                            parent.clearSearch(
+                                activity?.supportFragmentManager?.beginTransaction(),
+                                this
+                            )
 
 
-                    } else {
-                        Toast.makeText(requireContext(), "Action unsuccessful", Toast.LENGTH_SHORT)
+                        } else {
+                            Toast.makeText(
+                                requireContext(),
+                                "Action unsuccessful",
+                                Toast.LENGTH_SHORT
+                            )
+                                .show()
+                        }
+                    } catch (_: Exception) {
+                        Toast.makeText(requireContext(), "action unsuccessful", Toast.LENGTH_SHORT)
                             .show()
                     }
-
 
 
                 } else {

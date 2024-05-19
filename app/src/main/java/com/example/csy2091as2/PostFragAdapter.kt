@@ -5,10 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -116,14 +114,17 @@ class PostFragAdapter(
             try{
                 timer.scheduleAtFixedRate(object : TimerTask() {
                     override fun run() {
-                        likes = db.getLikeCount(dataset[position].postID)
-                        dislikes = db.getDislikeCount(dataset[position].postID)
-                        holder.txtLikeCount.post {
-                            holder.txtLikeCount.text = likes.toString()
-                        }
-                        holder.txtDislikeCount.post {
-                            holder.txtDislikeCount.text = dislikes.toString()
-                        }
+                        try{
+                            likes = db.getLikeCount(dataset[position].postID)
+                            dislikes = db.getDislikeCount(dataset[position].postID)
+                            holder.txtLikeCount.post {
+                                holder.txtLikeCount.text = likes.toString()
+                            }
+                            holder.txtDislikeCount.post {
+                                holder.txtDislikeCount.text = dislikes.toString()
+                            }
+                        }catch (_: IndexOutOfBoundsException){}
+
                     }
                 }, 0, 6000)
             } catch (_:Exception){}
@@ -304,7 +305,7 @@ class PostFragAdapter(
         //set the adapter for commments here
         val rvComment = dialog.findViewById<RecyclerView>(R.id.rvComment)
         rvComment.layoutManager = LinearLayoutManager(context)
-        val comments = db.getComment10(postID)
+        val comments = db.getComment(postID)
         rvComment.adapter = CommentAdapter(comments, context)
 
 
@@ -322,7 +323,7 @@ class PostFragAdapter(
                     ) != -1L
                 ) {
                     edtComment.setText("")
-                    rvComment.adapter = CommentAdapter(db.getComment10(postID), context)
+                    rvComment.adapter = CommentAdapter(db.getComment(postID), context)
                 }
 
             }
@@ -355,7 +356,7 @@ class PostFragAdapter(
     private fun delete(position: Int) {
         if (db.deletePost(dataset[position].postID) == 1) {
             Toast.makeText(context, "Post deleted", Toast.LENGTH_SHORT).show()
-            refreshRecyclerView(db.getPost10())
+            refreshRecyclerView(db.getPosts())
         } else {
             Toast.makeText(context, "Action Unsuccessful", Toast.LENGTH_SHORT).show()
         }

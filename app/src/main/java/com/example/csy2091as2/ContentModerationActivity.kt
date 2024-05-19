@@ -24,8 +24,6 @@ class ContentModerationActivity : AppCompatActivity() {
             "declined" -> db.getPostsDecline()
             else -> {null}
         }
-
-
         rvHomeFrag.adapter = PostFragAdapter(posts!!,this)
     }
 }

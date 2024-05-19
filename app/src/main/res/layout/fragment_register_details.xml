@@ -149,7 +149,7 @@
             android:layout_height="wrap_content"
             app:errorEnabled="true"
             android:visibility="gone"
-            android:hint="Select an option">
+            android:hint="Select User type">
 
             <AutoCompleteTextView
                 android:id="@+id/inpedtUserType"

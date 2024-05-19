@@ -33,7 +33,6 @@ class UpdateInfoActivity : AppCompatActivity() {
             val bundle = makeStudentBundle(studentInfo)
             fragment.arguments = bundle
 
-            transaction = supportFragmentManager.beginTransaction()
             transaction.replace(R.id.fcUpdateInfo, fragment).commit()
 
             binding.llUpdateSearch.visibility = View.GONE
@@ -88,9 +87,7 @@ class UpdateInfoActivity : AppCompatActivity() {
      * clears the search filed and removes the fragment
      */
     fun clearSearch(transaction: FragmentTransaction?, fragment: Fragment){
-        if (transaction != null) {
-            transaction.remove(fragment).commitNow()
-        }
+        transaction?.remove(fragment)?.commitNow()
         binding.edtUpdateInfo.setText("")
     }
 }

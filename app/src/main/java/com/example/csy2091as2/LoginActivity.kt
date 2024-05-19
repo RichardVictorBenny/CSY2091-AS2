@@ -53,8 +53,6 @@ class LoginActivity : AppCompatActivity() {
 
         txtSignUp.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
-
-
         }
 
         btnLogin.setOnClickListener {
@@ -66,7 +64,7 @@ class LoginActivity : AppCompatActivity() {
 
             var username = edtUserName.text.toString()
             try {
-                if(validation.validateEmail(edtUserName, layUserName)){
+                if(validation.validateGivenEmail(edtUserName.text.toString())){
                     if(db.fetchUsername(username) != null){
                         username = db.fetchUsername(username)!!
                     } else{
@@ -85,6 +83,7 @@ class LoginActivity : AppCompatActivity() {
 
 
 
+
             if (userType == "student" || userType == "admin") {
                 //making a file with username and access level for global access.
                 val userInfo = this.getSharedPreferences("currentUser", Context.MODE_PRIVATE)
@@ -96,6 +95,7 @@ class LoginActivity : AppCompatActivity() {
                 edtUserName.setText("")
                 edtPassword.setText("")
                 layUserName.error= null
+                layPassword.error = null
 
                 val activity = Intent(this, MainActivity::class.java)
                 if (chkSaveUser.isChecked) {

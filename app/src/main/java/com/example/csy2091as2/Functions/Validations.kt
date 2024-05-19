@@ -1,8 +1,6 @@
 package com.example.csy2091as2.Functions
 
-import android.util.Log
 import android.util.Patterns
-import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
@@ -24,14 +22,28 @@ class Validations {
     }
 
     /**
-     * checks if no value is provided after staring to type
+     * checks if no value is provided after starting to type
      */
     fun setErrorOnChange(inputLayout: TextInputLayout, editText: TextInputEditText) {
         editText.doOnTextChanged { text, start, before, count ->
 
-                checkForSpecialChars(inputLayout, text)
-                inputLayout.error = if (text.isNullOrBlank()) "Can't be empty" else null
 
+                inputLayout.error = if (text.isNullOrBlank()) "Can't be empty" else null
+            checkForSpecialCharsNum(inputLayout, text)
+
+        }
+    }
+
+
+    /**
+     * checks if no value is provided after starting to type
+     */
+    fun setErrorOnChange(inputLayout: TextInputLayout, editText: TextInputEditText, text1: String) {
+        editText.doOnTextChanged { text, start, before, count ->
+
+
+            inputLayout.error = if (text.isNullOrBlank()) "Can't be empty" else null
+            checkForSpecialChars(inputLayout, text.toString())
 
         }
     }
@@ -39,7 +51,7 @@ class Validations {
     /**
      * checks if only the allowed characters are entered for a charSequence
      */
-    fun checkForSpecialChars(inputLayout: TextInputLayout, text: CharSequence?){
+    fun checkForSpecialCharsNum(inputLayout: TextInputLayout, text: CharSequence?){
 //        Log.d("TAG", "checkForSpecialChars: starrt")
         if (text != null && inputLayout.error == null) {
 //            Log.d("TAG", text.toString())
@@ -52,9 +64,19 @@ class Validations {
      * checks if only the allowed characters are entered
      * overloaded function
      */
-    fun checkForSpecialChars(inputLayout: TextInputLayout, text: String){
+    fun checkForSpecialCharsNum(inputLayout: TextInputLayout, text: String){
         if(inputLayout.error == null){
             inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}~0123456789]".toRegex())) "Invalid Character" else null
+        }
+
+    }
+
+    /**
+     * checks if only the allowed characters are entered
+     */
+    fun checkForSpecialChars(inputLayout: TextInputLayout, text: String){
+        if(inputLayout.error == null){
+            inputLayout.error = if(text.contains("[!\"#$%&'()*+,-./:;\\\\<=>?@\\[\\]^_`{|}]".toRegex())) "Invalid Character" else null
         }
 
     }
@@ -67,9 +89,13 @@ class Validations {
 
         if(!inpDate.isBefore(currentDate)){
             layout.error = "Invalid Date Entry"
+        }else {
+            layout.error = null
         }
         if(currentDate.compareTo(inpDate)<6){
             layout.error = "Too Young"
+        } else{
+            layout.error = null
         }
     }
 
@@ -80,15 +106,28 @@ class Validations {
 
 
         val emailDomains = arrayOf("middlemore.co.uk", "my.middlemore.co.uk")
-        val inputDomain = editText.text.toString().split("@")[1]
+        var inputDomain = ""
+        try{
+            inputDomain = editText.text.toString().split("@")[1]
 
-        if((!emailDomains.contains(inputDomain))){
-            Log.d("TAG", "validateEmail: $emailDomains")
-            layout.error = "invalid email"
-//            Log.d("TAG", "validateEmail: $inputDomain")
-        } else{
-            layout.error = null
+            if((!emailDomains.contains(inputDomain))){
+                layout.error = "invalid email"
+            } else{
+                layout.error = null
+            }
+        } catch (_: Exception){
         }
+
+
+        return emailDomains.contains(inputDomain)
+    }
+
+    fun validateGivenEmail(text: String): Boolean {
+
+
+        val emailDomains = arrayOf("middlemore.co.uk", "my.middlemore.co.uk")
+        val inputDomain = text.split("@")[1]
+
         return emailDomains.contains(inputDomain)
     }
 

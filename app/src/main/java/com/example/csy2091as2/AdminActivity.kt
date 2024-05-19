@@ -116,28 +116,33 @@ class AdminActivity : AppCompatActivity() {
 
         btnSeach.setOnClickListener {
             student = edtStudent.text.toString()
-
-            if (Patterns.EMAIL_ADDRESS.matcher(student).matches()) {
-                try {
-                    student = db.fetchUsername(student)!!
-                } catch (_: Exception) {
-                    Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
+            if(student != ""){
+                if (Patterns.EMAIL_ADDRESS.matcher(student).matches()) {
+                    try {
+                        student = db.fetchUsername(student)!!
+                    } catch (_: Exception) {
+                        Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            }
-            if (student != userInfo.get("username")) { //check to prevent self deletion
+                if (student != userInfo.get("username")) { //check to prevent self deletion
 
-                try {
-                    val studentInfo = db.fetchUser(student)!!
-                    llDetails.visibility = View.VISIBLE
-                    txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
-                    txtEmail.setText(studentInfo.email)
-                    txtDob.setText(studentInfo.dateOfBirth)
-                } catch (_: Exception) {
-                    Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
+                    try {
+                        val studentInfo = db.fetchUser(student)!!
+                        llDetails.visibility = View.VISIBLE
+                        txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
+                        txtEmail.setText(studentInfo.email)
+                        txtDob.setText(studentInfo.dateOfBirth)
+                    } catch (_: Exception) {
+                        Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Cannot delete yourself", Toast.LENGTH_SHORT).show()
                 }
-            } else {
-                Toast.makeText(this, "Cannot delete yourself", Toast.LENGTH_SHORT).show()
+            } else{
+                Toast.makeText(this, "Provide username", Toast.LENGTH_SHORT).show()
             }
+
+
 
         }
 
@@ -149,6 +154,8 @@ class AdminActivity : AppCompatActivity() {
                         edtStudent.setText("")
                         Toast.makeText(this, "$student is deleted", Toast.LENGTH_SHORT).show()
                     }
+                } else{
+                    Toast.makeText(this, "User not picked", Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
             }
@@ -187,24 +194,29 @@ class AdminActivity : AppCompatActivity() {
 
         btnSearch.setOnClickListener {
             student = edtStudent.text.toString()
-
-            if (Patterns.EMAIL_ADDRESS.matcher(student).matches()) {
-                try {
-                    student = db.fetchUsername(student)!!
-                } catch (_: Exception) {
-                    Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
+            if(student != ""){
+                if (Patterns.EMAIL_ADDRESS.matcher(student).matches()) {
+                    try {
+                        student = db.fetchUsername(student)!!
+                    } catch (_: Exception) {
+                        Toast.makeText(this, "Email does not exist", Toast.LENGTH_SHORT).show()
+                    }
                 }
+
+                try {
+                    val studentInfo = db.fetchUser(student)!!
+                    llUpdate.visibility = View.VISIBLE
+                    txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
+                    txtEmail.setText(studentInfo.email)
+                    txtDob.setText(studentInfo.dateOfBirth)
+                } catch (_: Exception) {
+                    Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
+                }
+            } else{
+                Toast.makeText(this, "Provide username", Toast.LENGTH_SHORT).show()
             }
 
-            try {
-                val studentInfo = db.fetchUser(student)!!
-                llUpdate.visibility = View.VISIBLE
-                txtName.setText("${studentInfo.firstName} ${studentInfo.lastName}")
-                txtEmail.setText(studentInfo.email)
-                txtDob.setText(studentInfo.dateOfBirth)
-            } catch (_: Exception) {
-                Toast.makeText(this, "User does not exist", Toast.LENGTH_SHORT).show()
-            }
+
         }
 
         btnGenerate.setOnClickListener {
@@ -226,7 +238,13 @@ class AdminActivity : AppCompatActivity() {
 
         btnUpdate.setOnClickListener {
             try {
-                if (edtNewPassword.text != null && llUpdate.visibility == View.VISIBLE) {
+                if(edtStudent.text.toString() == ""){
+                    Toast.makeText(this, "please pick a user", Toast.LENGTH_SHORT).show()
+                }
+                if(llUpdate.visibility == View.GONE){
+                    Toast.makeText(this, "Please search for the user", Toast.LENGTH_SHORT).show()
+                }
+                if ((edtNewPassword.text != null && llUpdate.visibility == View.VISIBLE)) {
                     if (db.updatePassword(
                             student,
                             Hashing.doHashing(edtNewPassword.text.toString(), student)
@@ -234,6 +252,7 @@ class AdminActivity : AppCompatActivity() {
                     ) {
                         llUpdate.visibility = View.GONE
                         edtNewPassword.setText("")
+                        edtStudent.setText("")
                         Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show()
                         if (student == userInfo.get("username")) {
                             Functions.logout(this)
@@ -244,6 +263,7 @@ class AdminActivity : AppCompatActivity() {
                     Toast.makeText(this, "No new Password set", Toast.LENGTH_SHORT).show()
                 }
             } catch (_: Exception) {
+
             }
         }
         dialog.show()
